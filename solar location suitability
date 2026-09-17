@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SolarQuest - Location Suitability</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #07111f;
+    color: white;
+    min-height: 100vh;
+}
+
+/* SIDEBAR */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 245px;
+    height: 100vh;
+    background: linear-gradient(180deg, #0b1b31, #06101d);
+    border-right: 1px solid #183452;
+    padding: 25px 15px;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffd54a;
+    margin-bottom: 35px;
+    padding-left: 15px;
+}
+
+.logo span {
+    color: #42d9ff;
+}
+
+.menu-title {
+    color: #66809d;
+    font-size: 11px;
+    margin: 20px 15px 10px;
+    text-transform: uppercase;
+}
+
+.menu-item {
+    padding: 13px 15px;
+    margin: 5px 0;
+    border-radius: 10px;
+    color: #9db1c8;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.menu-item:hover {
+    background: #102b47;
+    color: white;
+}
+
+.menu-item.active {
+    background: linear-gradient(90deg, #14395d, #10263e);
+    color: #ffd54a;
+    border-left: 3px solid #ffd54a;
+}
+
+/* MAIN */
+.main {
+    margin-left: 245px;
+    padding: 35px;
+}
+
+/* HEADER */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.header h1 {
+    font-size: 30px;
+}
+
+.header p {
+    color: #8197ae;
+    margin-top: 7px;
+}
+
+.location-badge {
+    background: #10263e;
+    border: 1px solid #214765;
+    padding: 10px 16px;
+    border-radius: 20px;
+    color: #8fdfff;
+}
+
+/* HERO */
+.hero {
+    background: linear-gradient(135deg, #102d4b, #091827);
+    border: 1px solid #1c4567;
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 25px;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::after {
+    content: "☀";
+    position: absolute;
+    right: 40px;
+    top: 20px;
+    font-size: 110px;
+    color: rgba(255, 213, 74, 0.08);
+}
+
+.hero h2 {
+    font-size: 25px;
+    margin-bottom: 10px;
+}
+
+.hero p {
+    color: #8ca5bd;
+    max-width: 650px;
+    line-height: 1.6;
+}
+
+/* SEARCH */
+.search-box {
+    display: flex;
+    gap: 10px;
+    margin-top: 25px;
+    position: relative;
+    z-index: 2;
+}
+
+.search-box input {
+    flex: 1;
+    padding: 14px 18px;
+    border-radius: 10px;
+    border: 1px solid #28516f;
+    background: #071522;
+    color: white;
+    outline: none;
+    font-size: 15px;
+}
+
+.search-box input:focus {
+    border-color: #42d9ff;
+}
+
+button {
+    padding: 14px 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.search-btn {
+    background: #ffd54a;
+    color: #101820;
+}
+
+.search-btn:hover {
+    background: #ffe477;
+}
+
+.location-btn {
+    background: #153957;
+    color: #73dfff;
+    border: 1px solid #285a79;
+}
+
+.location-btn:hover {
+    background: #1b486a;
+}
+
+/* SCORE */
+.score-card {
+    background: linear-gradient(145deg, #102d49, #091827);
+    border: 1px solid #23516e;
+    border-radius: 20px;
+    padding: 28px;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 25px;
+}
+
+.score-circle {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: conic-gradient(#ffd54a 0deg, #ffd54a 0deg, #18324b 0deg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.score-circle::before {
+    content: "";
+    width: 118px;
+    height: 118px;
+    background: #0a1929;
+    border-radius: 50%;
+    position: absolute;
+}
+
+.score-number {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+}
+
+.score-number h2 {
+    font-size: 38px;
+    color: #ffd54a;
+}
+
+.score-number span {
+    color: #7790a8;
+    font-size: 12px;
+}
+
+.score-info h2 {
+    margin-bottom: 8px;
+}
+
+.score-info p {
+    color: #8da4ba;
+    line-height: 1.6;
+}
+
+/* CARDS */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.card {
+    background: #0c1d30;
+    border: 1px solid #1a3b58;
+    border-radius: 16px;
+    padding: 22px;
+}
+
+.card-icon {
+    font-size: 25px;
+    margin-bottom: 15px;
+}
+
+.card-title {
+    color: #7890a8;
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.card-value {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.card-unit {
+    color: #7f94a9;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+/* ANALYSIS */
+.analysis {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.panel {
+    background: #0c1d30;
+    border: 1px solid #1a3b58;
+    border-radius: 18px;
+    padding: 25px;
+}
+
+.panel h3 {
+    margin-bottom: 20px;
+}
+
+.factor {
+    margin-bottom: 20px;
+}
+
+.factor-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.factor-name {
+    color: #a4b6c8;
+}
+
+.factor-score {
+    color: #ffd54a;
+    font-weight: bold;
+}
+
+.progress {
+    height: 8px;
+    background: #172c40;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #ffd54a, #ff9d3c);
+    border-radius: 10px;
+    transition: width 0.8s;
+}
+
+/* LOCATION INFO */
+.location-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.info-box {
+    background: #081725;
+    border: 1px solid #183850;
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.info-box small {
+    color: #6e879e;
+}
+
+.info-box p {
+    margin-top: 5px;
+    color: #d8e5f0;
+}
+
+/* INSIGHT */
+.insight {
+    margin-top: 20px;
+    background: linear-gradient(90deg, #142f42, #102537);
+    border-left: 4px solid #42d9ff;
+    padding: 18px;
+    border-radius: 10px;
+    color: #b5c9d9;
+    line-height: 1.6;
+}
+
+/* LOADING */
+.loading {
+    text-align: center;
+    padding: 20px;
+    color: #7d96ae;
+    display: none;
+}
+
+.error {
+    background: #3b2024;
+    color: #ff9d9d;
+    border: 1px solid #74373d;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: none;
+}
+
+/* RESPONSIVE */
+@media(max-width: 1000px) {
+    .cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .analysis {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media(max-width: 700px) {
+    .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+    }
+
+    .main {
+        margin-left: 0;
+        padding: 20px;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    .score-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .search-box {
+        flex-direction: column;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+
+    <div class="logo">
+        ☀ Solar<span>Quest</span>
+    </div>
+
+    <div class="menu-title">Main</div>
+
+    <div class="menu-item">▣ Dashboard</div>
+    <div class="menu-item">☀ Solar Analysis</div>
+    <div class="menu-item">⚙ Optimizer</div>
+    <div class="menu-item">◉ Simulation</div>
+    <div class="menu-item">✦ AI Prediction</div>
+    <div class="menu-item">▥ Analytics</div>
+
+    <div class="menu-title">Tools</div>
+
+    <div class="menu-item">☼ Weather & Sunlight</div>
+    <div class="menu-item active">📍 Location Suitability</div>
+    <div class="menu-item">◈ What-If Simulator</div>
+    <div class="menu-item">🏆 SolarQuest Challenge</div>
+
+</div>
+
+
+<!-- MAIN -->
+<div class="main">
+
+    <div class="header">
+        <div>
+            <h1>Location Suitability</h1>
+            <p>Analyze whether a location is suitable for solar energy generation.</p>
+        </div>
+
+        <div class="location-badge" id="locationBadge">
+            📍 Chennai, India
+        </div>
+    </div>
+
+
+    <!-- HERO -->
+    <div class="hero">
+
+        <h2>📍 Solar Location Analysis</h2>
+
+        <p>
+            Enter a city or use your current location to analyze its
+            solar energy potential. SolarQuest evaluates sunlight,
+            cloud cover, sunshine duration, rainfall and wind conditions.
+        </p>
+
+        <div class="search-box">
+
+            <input
+                type="text"
+                id="cityInput"
+                placeholder="Enter city name e.g. Chennai"
+            >
+
+            <button class="search-btn" onclick="searchCity()">
+                🔍 Analyze Location
+            </button>
+
+            <button class="location-btn" onclick="useMyLocation()">
+                📍 My Location
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="error" id="errorBox"></div>
+
+    <div class="loading" id="loading">
+        ☀ Analyzing solar conditions...
+    </div>
+
+
+    <!-- SCORE -->
+    <div class="score-card">
+
+        <div class="score-circle" id="scoreCircle">
+
+            <div class="score-number">
+                <h2 id="score">--</h2>
+                <span>/ 100</span>
+            </div>
+
+        </div>
+
+        <div class="score-info">
+
+            <h2 id="suitabilityTitle">
+                Location Suitability
+            </h2>
+
+            <p id="suitabilityText">
+                Search for a location to calculate its solar suitability.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- SUMMARY CARDS -->
+    <div class="cards">
+
+        <div class="card">
+
+            <div class="card-icon">☀️</div>
+
+            <div class="card-title">
+                Solar Radiation
+            </div>
+
+            <div class="card-value" id="solarRadiation">
+                --
+            </div>
+
+            <div class="card-unit">
+                W/m²
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-icon">🌤️</div>
+
+            <div class="card-title">
+                Cloud Cover
+            </div>
+
+            <div class="card-value" id="cloudCover">
+                --
+            </div>
+
+            <div class="card-unit">
+                %
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-icon">🌞</div>
+
+            <div class="card-title">
+                Sunshine
+            </div>
+
+            <div class="card-value" id="sunshine">
+                --
+            </div>
+
+            <div class="card-unit">
+                hours
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-icon">💨</div>
+
+            <div class="card-title">
+                Wind Speed
+            </div>
+
+            <div class="card-value" id="windSpeed">
+                --
+            </div>
+
+            <div class="card-unit">
+                km/h
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ANALYSIS -->
+    <div class="analysis">
+
+        <!-- FACTORS -->
+        <div class="panel">
+
+            <h3>☀ Suitability Factors</h3>
+
+            <div class="factor">
+
+                <div class="factor-header">
+                    <span class="factor-name">
+                        Solar Radiation
+                    </span>
+
+                    <span class="factor-score" id="solarFactor">
+                        --%
+                    </span>
+                </div>
+
+                <div class="progress">
+                    <div class="progress-bar" id="solarBar"></div>
+                </div>
+
+            </div>
+
+
+            <div class="factor">
+
+                <div class="factor-header">
+                    <span class="factor-name">
+                        Sunshine Duration
+                    </span>
+
+                    <span class="factor-score" id="sunFactor">
+                        --%
+                    </span>
+                </div>
+
+                <div class="progress">
+                    <div class="progress-bar" id="sunBar"></div>
+                </div>
+
+            </div>
+
+
+            <div class="factor">
+
+                <div class="factor-header">
+                    <span class="factor-name">
+                        Cloud Conditions
+                    </span>
+
+                    <span class="factor-score" id="cloudFactor">
+                        --%
+                    </span>
+                </div>
+
+                <div class="progress">
+                    <div class="progress-bar" id="cloudBar"></div>
+                </div>
+
+            </div>
+
+
+            <div class="factor">
+
+                <div class="factor-header">
+                    <span class="factor-name">
+                        Weather Conditions
+                    </span>
+
+                    <span class="factor-score" id="weatherFactor">
+                        --%
+                    </span>
+                </div>
+
+                <div class="progress">
+                    <div class="progress-bar" id="weatherBar"></div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- LOCATION -->
+        <div class="panel">
+
+            <h3>📍 Location Information</h3>
+
+            <div class="location-info">
+
+                <div class="info-box">
+                    <small>Latitude</small>
+                    <p id="latitude">--</p>
+                </div>
+
+                <div class="info-box">
+                    <small>Longitude</small>
+                    <p id="longitude">--</p>
+                </div>
+
+                <div class="info-box">
+                    <small>Timezone</small>
+                    <p id="timezone">--</p>
+                </div>
+
+                <div class="info-box">
+                    <small>Rainfall</small>
+                    <p id="rainfall">--</p>
+                </div>
+
+            </div>
+
+            <div class="insight" id="insight">
+                💡 Location insights will appear here after analysis.
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* ================================
+   DEFAULT LOCATION
+================================ */
+
+let currentLat = 13.0827;
+let currentLon = 80.2707;
+
+
+/* ================================
+   LOAD LOCATION
+================================ */
+
+async function analyzeLocation(lat, lon, locationName) {
+
+    showLoading(true);
+    hideError();
+
+    try {
+
+        const url =
+        `https://api.open-meteo.com/v1/forecast?` +
+        `latitude=${lat}` +
+        `&longitude=${lon}` +
+        `&current=temperature_2m,cloud_cover,wind_speed_10m,shortwave_radiation` +
+        `&hourly=sunshine_duration,precipitation` +
+        `&timezone=auto` +
+        `&forecast_days=1`;
+
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error("Weather data could not be loaded.");
+        }
+
+        const data = await response.json();
+
+        const current = data.current;
+
+        const solar = current.shortwave_radiation || 0;
+        const cloud = current.cloud_cover || 0;
+        const wind = current.wind_speed_10m || 0;
+
+        /*
+        Sunshine duration is returned in seconds.
+        Convert to hours.
+        */
+
+        let sunshineSeconds = 0;
+
+        if (
+            data.hourly &&
+            data.hourly.sunshine_duration
+        ) {
+
+            sunshineSeconds =
+                data.hourly.sunshine_duration.reduce(
+                    (sum, value) => sum + (value || 0),
+                    0
+                );
+
+        }
+
+        const sunshineHours =
+            sunshineSeconds / 3600;
+
+
+        /*
+        Calculate rainfall.
+        */
+
+        let rainfall = 0;
+
+        if (
+            data.hourly &&
+            data.hourly.precipitation
+        ) {
+
+            rainfall =
+                data.hourly.precipitation.reduce(
+                    (sum, value) => sum + (value || 0),
+                    0
+                );
+
+        }
+
+
+        /* ================================
+           CALCULATE FACTOR SCORES
+        ================================= */
+
+        /*
+        Solar radiation:
+        0 W/m² = 0
+        1000 W/m² = 100
+        */
+
+        const solarScore =
+            Math.min(100, (solar / 1000) * 100);
+
+
+        /*
+        Sunshine:
+        0 hours = 0
+        12 hours = 100
+        */
+
+        const sunScore =
+            Math.min(100, (sunshineHours / 12) * 100);
+
+
+        /*
+        Lower cloud cover is better.
+        */
+
+        const cloudScore =
+            Math.max(0, 100 - cloud);
+
+
+        /*
+        Weather score.
+        Moderate wind and lower rainfall
+        are considered favorable.
+        */
+
+        let weatherScore = 100;
+
+        if (wind > 30) {
+            weatherScore -= 20;
+        }
+
+        if (wind > 50) {
+            weatherScore -= 20;
+        }
+
+        if (rainfall > 5) {
+            weatherScore -= 15;
+        }
+
+        if (rainfall > 15) {
+            weatherScore -= 20;
+        }
+
+        weatherScore =
+            Math.max(0, weatherScore);
+
+
+        /*
+        Overall score.
+        */
+
+        const overallScore = Math.round(
+            solarScore * 0.40 +
+            sunScore * 0.25 +
+            cloudScore * 0.25 +
+            weatherScore * 0.10
+        );
+
+
+        /* ================================
+           UPDATE UI
+        ================================= */
+
+        document.getElementById("score").textContent =
+            overallScore;
+
+        document.getElementById("solarRadiation").textContent =
+            Math.round(solar);
+
+        document.getElementById("cloudCover").textContent =
+            Math.round(cloud);
+
+        document.getElementById("sunshine").textContent =
+            sunshineHours.toFixed(1);
+
+        document.getElementById("windSpeed").textContent =
+            wind.toFixed(1);
+
+
+        document.getElementById("latitude").textContent =
+            Number(lat).toFixed(4);
+
+        document.getElementById("longitude").textContent =
+            Number(lon).toFixed(4);
+
+        document.getElementById("timezone").textContent =
+            data.timezone || "--";
+
+        document.getElementById("rainfall").textContent =
+            rainfall.toFixed(1) + " mm";
+
+
+        /* ================================
+           FACTOR BARS
+        ================================= */
+
+        setFactor(
+            "solarFactor",
+            "solarBar",
+            solarScore
+        );
+
+        setFactor(
+            "sunFactor",
+            "sunBar",
+            sunScore
+        );
+
+        setFactor(
+            "cloudFactor",
+            "cloudBar",
+            cloudScore
+        );
+
+        setFactor(
+            "weatherFactor",
+            "weatherBar",
+            weatherScore
+        );
+
+
+        /* ================================
+           SUITABILITY MESSAGE
+        ================================= */
+
+        let title;
+        let message;
+
+        if (overallScore >= 75) {
+
+            title = "High Solar Potential";
+
+            message =
+                "This location currently shows strong solar conditions, with good sunlight availability and relatively favorable weather conditions.";
+
+        }
+        else if (overallScore >= 50) {
+
+            title = "Moderate Solar Potential";
+
+            message =
+                "This location has moderate solar conditions. Solar installation may require additional analysis of long-term radiation and site conditions.";
+
+        }
+        else {
+
+            title = "Lower Solar Potential";
+
+            message =
+                "Current weather conditions show lower solar availability. Long-term historical solar data should be checked before making an installation decision.";
+
+        }
+
+
+        document.getElementById(
+            "suitabilityTitle"
+        ).textContent = title;
+
+        document.getElementById(
+            "suitabilityText"
+        ).textContent = message;
+
+
+        /* ================================
+           INSIGHT
+        ================================= */
+
+        let insight =
+            "💡 SolarQuest analyzed the current atmospheric conditions for this location. ";
+
+        if (solarScore >= 70) {
+
+            insight +=
+                "Solar radiation is currently favorable. ";
+
+        }
+        else {
+
+            insight +=
+                "Solar radiation is currently limited. ";
+
+        }
+
+        if (cloud < 30) {
+
+            insight +=
+                "Low cloud cover provides good sunlight availability.";
+
+        }
+        else if (cloud < 60) {
+
+            insight +=
+                "Moderate cloud cover may reduce solar generation.";
+
+        }
+        else {
+
+            insight +=
+                "High cloud cover may significantly reduce solar generation.";
+
+        }
+
+
+        document.getElementById("insight").textContent =
+            insight;
+
+
+        /* ================================
+           SCORE CIRCLE
+        ================================= */
+
+        const degrees =
+            overallScore * 3.6;
+
+        document.getElementById(
+            "scoreCircle"
+        ).style.background =
+            `conic-gradient(
+                #ffd54a ${degrees}deg,
+                #18324b ${degrees}deg
+            )`;
+
+
+        document.getElementById(
+            "locationBadge"
+        ).textContent =
+            "📍 " + locationName;
+
+
+        currentLat = lat;
+        currentLon = lon;
+
+    }
+    catch (error) {
+
+        showError(
+            "Unable to analyze this location. Please check the city name or try again."
+        );
+
+        console.error(error);
+
+    }
+    finally {
+
+        showLoading(false);
+
+    }
+}
+
+
+/* ================================
+   SEARCH CITY
+================================ */
+
+async function searchCity() {
+
+    const city =
+        document.getElementById(
+            "cityInput"
+        ).value.trim();
+
+    if (!city) {
+
+        showError(
+            "Please enter a city name."
+        );
+
+        return;
+
+    }
+
+    showLoading(true);
+    hideError();
+
+    try {
+
+        const url =
+            `https://geocoding-api.open-meteo.com/v1/search?` +
+            `name=${encodeURIComponent(city)}` +
+            `&count=1&language=en&format=json`;
+
+        const response =
+            await fetch(url);
+
+        const data =
+            await response.json();
+
+        if (
+            !data.results ||
+            data.results.length === 0
+        ) {
+
+            throw new Error(
+                "Location not found."
+            );
+
+        }
+
+        const location =
+            data.results[0];
+
+        const name =
+            location.name;
+
+        const country =
+            location.country || "";
+
+        const displayName =
+            name + ", " + country;
+
+        await analyzeLocation(
+            location.latitude,
+            location.longitude,
+            displayName
+        );
+
+    }
+    catch (error) {
+
+        showError(
+            "Location not found. Try another city."
+        );
+
+        showLoading(false);
+
+    }
+}
+
+
+/* ================================
+   USE MY LOCATION
+================================ */
+
+function useMyLocation() {
+
+    if (!navigator.geolocation) {
+
+        showError(
+            "Geolocation is not supported by your browser."
+        );
+
+        return;
+
+    }
+
+    showLoading(true);
+    hideError();
+
+    navigator.geolocation.getCurrentPosition(
+
+        async function(position) {
+
+            const lat =
+                position.coords.latitude;
+
+            const lon =
+                position.coords.longitude;
+
+            try {
+
+                /*
+                Reverse geocoding
+                */
+
+                const url =
+                    `https://geocoding-api.open-meteo.com/v1/search?` +
+                    `latitude=${lat}&longitude=${lon}`;
+
+                /*
+                Open-Meteo does not provide a simple
+                reverse-geocoding endpoint in every setup,
+                so use coordinates as fallback.
+                */
+
+                await analyzeLocation(
+                    lat,
+                    lon,
+                    "My Location"
+                );
+
+            }
+            catch (error) {
+
+                showError(
+                    "Unable to analyze your location."
+                );
+
+                showLoading(false);
+
+            }
+
+        },
+
+        function() {
+
+            showError(
+                "Location permission was denied. Please allow location access."
+            );
+
+            showLoading(false);
+
+        }
+
+    );
+}
+
+
+/* ================================
+   FACTOR BAR
+================================ */
+
+function setFactor(
+    textId,
+    barId,
+    value
+) {
+
+    const rounded =
+        Math.round(value);
+
+    document.getElementById(
+        textId
+    ).textContent =
+        rounded + "%";
+
+    document.getElementById(
+        barId
+    ).style.width =
+        rounded + "%";
+}
+
+
+/* ================================
+   LOADING
+================================ */
+
+function showLoading(show) {
+
+    document.getElementById(
+        "loading"
+    ).style.display =
+        show ? "block" : "none";
+
+}
+
+
+/* ================================
+   ERROR
+================================ */
+
+function showError(message) {
+
+    const box =
+        document.getElementById(
+            "errorBox"
+        );
+
+    box.textContent = message;
+
+    box.style.display = "block";
+
+}
+
+
+function hideError() {
+
+    document.getElementById(
+        "errorBox"
+    ).style.display = "none";
+
+}
+
+
+/* ================================
+   ENTER KEY
+================================ */
+
+document.getElementById(
+    "cityInput"
+).addEventListener(
+    "keypress",
+    function(event) {
+
+        if (event.key === "Enter") {
+            searchCity();
+        }
+
+    }
+);
+
+
+/* ================================
+   LOAD DEFAULT CHENNAI
+================================ */
+
+window.onload = function() {
+
+    analyzeLocation(
+        13.0827,
+        80.2707,
+        "Chennai, India"
+    );
+
+};
+
+</script>
+
+</body>
+</html>
