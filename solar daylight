@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Daylight — SolarQuest</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#070C16;
+    --panel:#101B2E;
+    --panel-2:#0C1526;
+    --line:rgba(255,255,255,.07);
+    --text:#EDF1F7;
+    --text-dim:#8996AA;
+    --gold:#F5A742;
+    --gold-soft:#FBC978;
+    --blue:#4C8DFF;
+    --purple:#A78BFA;
+    --green:#34D399;
+    --red:#F17171;
+    font-size:16px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(1100px 500px at 15% -10%, #12213B 0%, transparent 60%),
+      radial-gradient(900px 500px at 100% 0%, #16233d80 0%, transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    padding:1.5rem 1.5rem 3.5rem;
+  }
+  .wrap{max-width:1180px;margin:0 auto;}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.4rem;flex-wrap:wrap;gap:.75rem;}
+  .brand{display:flex;align-items:center;gap:.65rem;}
+  .brand-mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--gold),#D9861F);
+    display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px #F5A74240;}
+  .brand-name{font-weight:700;font-size:1rem;letter-spacing:-.01em;}
+  .brand-page{color:var(--text-dim);font-size:.78rem;margin-top:1px;}
+  .status{display:flex;align-items:center;gap:1rem;font-size:.78rem;color:var(--text-dim);}
+  .live{display:flex;align-items:center;gap:.4rem;color:var(--green);font-weight:600;}
+  .live .dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+  @media (prefers-reduced-motion:reduce){.live .dot{animation:none;}}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(52,211,153,.55);}70%{box-shadow:0 0 0 7px rgba(52,211,153,0);}100%{box-shadow:0 0 0 0 rgba(52,211,153,0);}}
+
+  .hero{position:relative;border-radius:22px;overflow:hidden;border:1px solid var(--line);
+    background:radial-gradient(500px 260px at 78% 15%, #2A466F55 0%, transparent 70%),
+      linear-gradient(180deg,#132443 0%, #0C1730 55%, #081020 100%);
+    padding:1.9rem 1.9rem 2.2rem;margin-bottom:1.1rem;}
+  .hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;}
+  .hero h1{font-size:1.5rem;font-weight:700;margin:0 0 .3rem;letter-spacing:-.01em;}
+  .hero .sub{color:#B9C4D6;font-size:.88rem;margin:0;max-width:34ch;}
+
+  .sun-chip{background:#0B172ACC;border:1px solid var(--line);border-radius:12px;padding:.65rem .9rem;
+    font-size:.76rem;color:var(--text-dim);min-width:150px;}
+  .sun-chip .row{display:flex;justify-content:space-between;color:var(--text);font-weight:600;margin-top:.15rem;font-size:.85rem;}
+  .sun-chip .row + .row{margin-top:.35rem;}
+
+  .arc-stage{position:relative;height:150px;margin-top:1rem;}
+  .arc-stage svg{width:100%;height:100%;display:block;}
+
+  .loc-row{display:flex;align-items:center;gap:.9rem;flex-wrap:wrap;margin-top:.6rem;}
+  .loc-current{display:flex;align-items:center;gap:.6rem;color:#CBD5E6;font-size:.85rem;}
+  .loc-current b{color:var(--text);font-weight:600;}
+
+  .search-row{display:flex;gap:.5rem;margin-top:.9rem;position:relative;max-width:420px;}
+  .search-box{position:relative;flex:1;}
+  input[type="text"]{width:100%;background:#0B172AB0;border:1px solid var(--line);color:var(--text);
+    font-family:'Inter',sans-serif;font-size:.88rem;padding:.7rem .95rem;border-radius:10px;outline:none;}
+  input[type="text"]::placeholder{color:var(--text-dim);}
+  input[type="text"]:focus{border-color:var(--gold);box-shadow:0 0 0 3px #F5A74226;}
+  .suggestions{position:absolute;top:calc(100% + 6px);left:0;right:0;background:#101B2E;border:1px solid var(--line);
+    border-radius:10px;overflow:hidden;z-index:20;max-height:240px;overflow-y:auto;box-shadow:0 16px 34px #00000060;}
+  .suggestions button{display:block;width:100%;text-align:left;background:none;border:none;color:var(--text);
+    font-family:'Inter',sans-serif;font-size:.85rem;padding:.6rem .9rem;cursor:pointer;}
+  .suggestions button:hover,.suggestions button:focus-visible{background:#F5A74220;}
+  .locate-btn{background:#0B172AB0;border:1px solid var(--line);color:var(--text);border-radius:10px;
+    padding:0 .95rem;cursor:pointer;font-size:1rem;}
+  .locate-btn:hover{border-color:var(--gold);color:var(--gold-soft);}
+  button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+
+  .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.1rem;}
+  @media (max-width:820px){.tiles{grid-template-columns:repeat(2,1fr);}}
+  .tile{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:1.1rem 1.15rem;}
+  .tile-top{display:flex;align-items:center;gap:.6rem;margin-bottom:.7rem;}
+  .icon-badge{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .tile-label{color:var(--text-dim);font-size:.78rem;}
+  .tile-num{font-size:1.5rem;font-weight:700;letter-spacing:-.01em;font-variant-numeric:tabular-nums;}
+  .tile-delta{display:inline-flex;align-items:center;gap:.25rem;font-size:.72rem;font-weight:600;margin-top:.4rem;padding:.15rem .5rem;border-radius:20px;}
+  .delta-up{background:#34D39922;color:var(--green);}
+  .delta-down{background:#F1717122;color:var(--red);}
+  .delta-flat{background:#8996AA22;color:var(--text-dim);}
+
+  .grid2{display:grid;grid-template-columns:1.5fr 1fr;gap:1.1rem;}
+  @media (max-width:900px){.grid2{grid-template-columns:1fr;}}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:1.4rem 1.5rem;}
+  .panel h2{font-size:.85rem;font-weight:600;margin:0 0 .2rem;}
+  .panel .desc{color:var(--text-dim);font-size:.76rem;margin:0 0 1rem;}
+  .panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:.6rem;flex-wrap:wrap;margin-bottom:.6rem;}
+  .date-controls{display:flex;align-items:center;gap:.5rem;}
+  input[type="date"]{background:var(--panel-2);border:1px solid var(--line);color:var(--text);font-family:'Inter',sans-serif;
+    padding:.4rem .6rem;border-radius:8px;font-size:.78rem;color-scheme:dark;}
+  .today-btn{background:none;border:1px solid var(--line);color:var(--text-dim);border-radius:8px;padding:.4rem .7rem;
+    font-size:.75rem;cursor:pointer;font-family:'Inter',sans-serif;}
+  .today-btn:hover{color:var(--text);border-color:var(--gold);}
+
+  .year-chart{width:100%;height:auto;display:block;}
+
+  .compass-wrap{display:flex;justify-content:center;margin:.4rem 0 .6rem;}
+  .compass-wrap svg{width:100%;max-width:220px;height:auto;}
+  .compass-readout{display:flex;justify-content:space-around;text-align:center;margin-top:.4rem;}
+  .compass-readout div .v{font-weight:700;font-size:1rem;}
+  .compass-readout div .l{color:var(--text-dim);font-size:.7rem;margin-top:.1rem;}
+
+  .insight{margin-top:1.1rem;background:linear-gradient(135deg,#152B1F,#0F1E2E);
+    border:1px solid #34D39930;border-radius:16px;padding:1.1rem 1.2rem;
+    font-size:.84rem;color:#D6E4DD;line-height:1.5;}
+  .insight b{color:var(--gold-soft);}
+
+  .note{color:var(--text-dim);font-size:.7rem;margin-top:1.3rem;line-height:1.5;text-align:center;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4.5" fill="#0B1220"/><g stroke="#0B1220" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1.5" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22.5"/><line x1="1.5" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22.5" y2="12"/><line x1="4.4" y1="4.4" x2="6.1" y2="6.1"/><line x1="17.9" y1="17.9" x2="19.6" y2="19.6"/><line x1="4.4" y1="19.6" x2="6.1" y2="17.9"/><line x1="17.9" y1="6.1" x2="19.6" y2="4.4"/></g></svg>
+      </div>
+      <div>
+        <div class="brand-name">SolarQuest</div>
+        <div class="brand-page">Daylight &amp; sun position</div>
+      </div>
+    </div>
+    <div class="status">
+      <span class="live"><span class="dot"></span>Live</span>
+      <span id="updatedAt">Updated —</span>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-top">
+      <div>
+        <h1 id="greeting">Good day ☀</h1>
+        <p class="sub">Here's how much sunlight this location gets, and where the sun sits right now.</p>
+      </div>
+      <div class="sun-chip">
+        <div style="color:var(--text-dim);font-size:.72rem;">Sun position now</div>
+        <div class="row"><span style="color:var(--text-dim);font-weight:400;">Altitude</span><span id="chipAlt">–</span></div>
+        <div class="row"><span style="color:var(--text-dim);font-weight:400;">Azimuth</span><span id="chipAz">–</span></div>
+      </div>
+    </div>
+
+    <div class="arc-stage"><svg id="arcSvg" viewBox="0 0 900 150" preserveAspectRatio="xMidYMid meet"></svg></div>
+
+    <div class="loc-row">
+      <div class="loc-current">
+        <span>📍</span><span><b id="placeName">Chennai, India</b> · <span id="placeCoords">13.08°, 80.27°</span></span>
+      </div>
+    </div>
+    <div class="search-row">
+      <div class="search-box">
+        <input type="text" id="cityInput" placeholder="Search a city…" autocomplete="off" aria-label="Search for a city">
+        <div class="suggestions" id="suggestions" hidden></div>
+      </div>
+      <button class="locate-btn" id="locateBtn" title="Use my location" aria-label="Use my location">⌖</button>
+    </div>
+  </div>
+
+  <div class="tiles">
+    <div class="tile">
+      <div class="tile-top">
+        <div class="icon-badge" style="background:#F5A74222;color:var(--gold);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><line x1="12" y1="1.5" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22.5"/><line x1="1.5" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22.5" y2="12"/></svg>
+        </div>
+        <span class="tile-label">Daylight duration</span>
+      </div>
+      <div class="tile-num" id="durationNum">–</div>
+      <div class="tile-delta delta-flat" id="durationDelta">–</div>
+    </div>
+
+    <div class="tile">
+      <div class="tile-top">
+        <div class="icon-badge" style="background:#4C8DFF22;color:var(--blue);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="9" x2="12" y2="2"/><line x1="4.2" y1="10.2" x2="5.6" y2="11.6"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.4" y1="11.6" x2="19.8" y2="10.2"/><polyline points="9 18 21 18"/></svg>
+        </div>
+        <span class="tile-label">Sunrise</span>
+      </div>
+      <div class="tile-num" id="sunriseTime">–</div>
+      <div class="tile-delta delta-flat">Local time</div>
+    </div>
+
+    <div class="tile">
+      <div class="tile-top">
+        <div class="icon-badge" style="background:#FBC97822;color:var(--gold-soft);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <span class="tile-label">Solar noon</span>
+      </div>
+      <div class="tile-num" id="noonTime">–</div>
+      <div class="tile-delta delta-flat">Sun at its highest</div>
+    </div>
+
+    <div class="tile">
+      <div class="tile-top">
+        <div class="icon-badge" style="background:#A78BFA22;color:var(--purple);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="9" x2="12" y2="2"/><line x1="4.2" y1="10.2" x2="5.6" y2="11.6"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.4" y1="11.6" x2="19.8" y2="10.2"/><polyline points="21 18 9 18"/></svg>
+        </div>
+        <span class="tile-label">Sunset</span>
+      </div>
+      <div class="tile-num" id="sunsetTime">–</div>
+      <div class="tile-delta delta-flat">Local time</div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>Daylight across the year</h2>
+          <p class="desc">Hours of sunlight by month for this location</p>
+        </div>
+        <div class="date-controls">
+          <input type="date" id="dateInput">
+          <button class="today-btn" id="todayBtn">Today</button>
+        </div>
+      </div>
+      <svg id="yearSvg" class="year-chart" viewBox="0 0 620 170" preserveAspectRatio="xMidYMid meet"></svg>
+
+      <div class="insight" id="insightBox">Calculating…</div>
+    </div>
+
+    <div class="panel">
+      <h2>Sun position</h2>
+      <p class="desc">Altitude and direction, right now</p>
+      <div class="compass-wrap"><svg id="compassSvg" viewBox="0 0 220 220"></svg></div>
+      <div class="compass-readout">
+        <div><div class="v" id="compAlt">–</div><div class="l">altitude</div></div>
+        <div><div class="v" id="compAz">–</div><div class="l">azimuth</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">Sun position and daylight hours are computed directly from solar geometry for the coordinates shown. Clock times are approximate, based on the location's longitude.</div>
+</div>
+
+<script>
+(function(){
+  const CITIES = [
+    ["Chennai, India",13.0827,80.2707],["Mumbai, India",19.0760,72.8777],["Delhi, India",28.6139,77.2090],
+    ["Bengaluru, India",12.9716,77.5946],["Kolkata, India",22.5726,88.3639],
+    ["London, UK",51.5074,-0.1278],["Paris, France",48.8566,2.3522],["Berlin, Germany",52.5200,13.4050],
+    ["Madrid, Spain",40.4168,-3.7038],["Rome, Italy",41.9028,12.4964],["Amsterdam, Netherlands",52.3676,4.9041],
+    ["Reykjavik, Iceland",64.1466,-21.9426],["Tromsø, Norway",69.6492,18.9553],["Oslo, Norway",59.9139,10.7522],
+    ["Stockholm, Sweden",59.3293,18.0686],["Helsinki, Finland",60.1699,24.9384],["Moscow, Russia",55.7558,37.6173],
+    ["Murmansk, Russia",68.9585,33.0827],["Istanbul, Türkiye",41.0082,28.9784],["Cairo, Egypt",30.0444,31.2357],
+    ["Lagos, Nigeria",6.5244,3.3792],["Nairobi, Kenya",-1.2921,36.8219],["Cape Town, South Africa",-33.9249,18.4241],
+    ["Johannesburg, South Africa",-26.2041,28.0473],["Dubai, UAE",25.2048,55.2708],["Tel Aviv, Israel",32.0853,34.7818],
+    ["Riyadh, Saudi Arabia",24.7136,46.6753],["Tokyo, Japan",35.6762,139.6503],["Osaka, Japan",34.6937,135.5023],
+    ["Seoul, South Korea",37.5665,126.9780],["Beijing, China",39.9042,116.4074],["Shanghai, China",31.2304,121.4737],
+    ["Hong Kong",22.3193,114.1694],["Singapore",1.3521,103.8198],["Bangkok, Thailand",13.7563,100.5018],
+    ["Jakarta, Indonesia",-6.2088,106.8456],["Manila, Philippines",14.5995,120.9842],["Kuala Lumpur, Malaysia",3.1390,101.6869],
+    ["Sydney, Australia",-33.8688,151.2093],["Melbourne, Australia",-37.8136,144.9631],["Perth, Australia",-31.9505,115.8605],
+    ["Auckland, New Zealand",-36.8485,174.7633],["Wellington, New Zealand",-41.2865,174.7762],
+    ["New York, USA",40.7128,-74.0060],["Los Angeles, USA",34.0522,-118.2437],["Chicago, USA",41.8781,-87.6298],
+    ["Anchorage, USA",61.2181,-149.9003],["Miami, USA",25.7617,-80.1918],["Toronto, Canada",43.6532,-79.3832],
+    ["Vancouver, Canada",49.2827,-123.1207],["Iqaluit, Canada",63.7467,-68.5170],["Mexico City, Mexico",19.4326,-99.1332],
+    ["Rio de Janeiro, Brazil",-22.9068,-43.1729],["São Paulo, Brazil",-23.5505,-46.6333],["Buenos Aires, Argentina",-34.6037,-58.3816],
+    ["Santiago, Chile",-33.4489,-70.6693],["Lima, Peru",-12.0464,-77.0428],["Bogotá, Colombia",4.7110,-74.0721],
+    ["Ushuaia, Argentina",-54.8019,-68.3030],["Nuuk, Greenland",64.1836,-51.7214],["Longyearbyen, Svalbard",78.2232,15.6469],
+    ["Quito, Ecuador",-0.1807,-78.4678],["Athens, Greece",37.9838,23.7275],
+    ["Vienna, Austria",48.2082,16.3738],["Warsaw, Poland",52.2297,21.0122],["Dublin, Ireland",53.3498,-6.2603],
+    ["Lisbon, Portugal",38.7223,-9.1393],["Zurich, Switzerland",47.3769,8.5417]
+  ];
+
+  const els = {};
+  ['cityInput','suggestions','locateBtn','placeName','placeCoords','arcSvg','durationNum','durationDelta',
+   'sunriseTime','noonTime','sunsetTime','dateInput','todayBtn','yearSvg','compassSvg','compAlt','compAz',
+   'chipAlt','chipAz','insightBox','updatedAt','greeting'].forEach(id => els[id] = document.getElementById(id));
+
+  let current = { name: "Chennai, India", lat: 13.0827, lon: 80.2707 };
+
+  function toJulian(date){ return date.getTime()/86400000 + 2440587.5; }
+  function fromJulian(J){ return new Date((J - 2440587.5) * 86400000); }
+  function julianFromYMD(y, m, d){
+    const a = Math.floor((14 - m)/12);
+    const yy = y + 4800 - a;
+    const mm = m + 12*a - 3;
+    return d + Math.floor((153*mm+2)/5) + 365*yy + Math.floor(yy/4) - Math.floor(yy/100) + Math.floor(yy/400) - 32045;
+  }
+  const rad = Math.PI/180, deg = 180/Math.PI;
+
+  function sunTimes(y, m, d, lat, lon){
+    const Jdate = julianFromYMD(y, m, d);
+    const n = Jdate - 2451545.0 + 0.0008;
+    const Jstar = n - lon/360;
+    const M = ((357.5291 + 0.98560028 * Jstar) % 360 + 360) % 360;
+    const Mrad = M*rad;
+    const C = 1.9148*Math.sin(Mrad) + 0.02*Math.sin(2*Mrad) + 0.0003*Math.sin(3*Mrad);
+    const lambda = ((M + C + 180 + 102.9372) % 360 + 360) % 360;
+    const lambdaRad = lambda*rad;
+    const Jtransit = 2451545.0 + Jstar + 0.0053*Math.sin(Mrad) - 0.0069*Math.sin(2*lambdaRad);
+    const sinDelta = Math.sin(lambdaRad)*Math.sin(23.44*rad);
+    const delta = Math.asin(sinDelta);
+    const latRad = lat*rad;
+    const cosOmega = (Math.sin(-0.83*rad) - Math.sin(latRad)*Math.sin(delta)) / (Math.cos(latRad)*Math.cos(delta));
+    if (cosOmega > 1) return { polar:'night', transit: fromJulian(Jtransit) };
+    if (cosOmega < -1) return { polar:'day', transit: fromJulian(Jtransit) };
+    const omega = Math.acos(cosOmega)*deg;
+    const Jrise = Jtransit - omega/360, Jset = Jtransit + omega/360;
+    return { sunrise: fromJulian(Jrise), sunset: fromJulian(Jset), transit: fromJulian(Jtransit), durationHours: (Jset-Jrise)*24 };
+  }
+
+  function solarPosition(date, lat, lon){
+    const JD = toJulian(date);
+    const n = JD - 2451545.0;
+    const L = ((280.460 + 0.9856474*n) % 360 + 360) % 360;
+    const g = ((357.528 + 0.9856003*n) % 360 + 360) % 360;
+    const gRad = g*rad;
+    const lambdaSun = L + 1.915*Math.sin(gRad) + 0.020*Math.sin(2*gRad);
+    const lambdaRad = lambdaSun*rad;
+    const epsilon = (23.439 - 0.0000004*n)*rad;
+    const alphaRad = Math.atan2(Math.cos(epsilon)*Math.sin(lambdaRad), Math.cos(lambdaRad));
+    const deltaRad = Math.asin(Math.sin(epsilon)*Math.sin(lambdaRad));
+    const GMST = ((280.46061837 + 360.98564736629*n) % 360 + 360) % 360;
+    const alphaDeg = ((alphaRad*deg)%360+360)%360;
+    let H = GMST + lon - alphaDeg;
+    H = ((H+180)%360+360)%360 - 180;
+    const Hrad = H*rad, latRad = lat*rad;
+    const sinAlt = Math.sin(latRad)*Math.sin(deltaRad) + Math.cos(latRad)*Math.cos(deltaRad)*Math.cos(Hrad);
+    const alt = Math.asin(Math.min(Math.max(sinAlt,-1),1));
+    const cosAz = (Math.sin(deltaRad) - Math.sin(alt)*Math.sin(latRad)) / (Math.cos(alt)*Math.cos(latRad));
+    let az = Math.acos(Math.min(Math.max(cosAz,-1),1));
+    if (Math.sin(Hrad) > 0) az = 2*Math.PI - az;
+    return { altitude: alt*deg, azimuth: az*deg };
+  }
+
+  function tzOffsetHours(lon){ return Math.round(lon/15); }
+  function fmtLocalTime(utcDate, lon){
+    const off = tzOffsetHours(lon);
+    const shifted = new Date(utcDate.getTime() + off*3600000);
+    let h = shifted.getUTCHours(), m = shifted.getUTCMinutes();
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    let h12 = h % 12; if (h12 === 0) h12 = 12;
+    return h12 + ':' + String(m).padStart(2,'0') + ' ' + ampm;
+  }
+  function fmtDuration(hoursFloat){
+    const totalMin = Math.round(hoursFloat*60);
+    const h = Math.floor(totalMin/60), m = totalMin%60;
+    return h + 'h ' + String(m).padStart(2,'0') + 'm';
+  }
+
+  function drawArc(sunrise, sunset, polar){
+    const ns='http://www.w3.org/2000/svg', w=900,h=150,cx=w/2,cy=132,r=118;
+    els.arcSvg.innerHTML='';
+    const g = document.createElementNS(ns,'g');
+    const path = document.createElementNS(ns,'path');
+    path.setAttribute('d', `M ${cx-r} ${cy} A ${r} ${r} 0 0 1 ${cx+r} ${cy}`);
+    path.setAttribute('fill','none'); path.setAttribute('stroke','#F5A742');
+    path.setAttribute('stroke-width','1.5'); path.setAttribute('stroke-dasharray','2 7');
+    path.setAttribute('stroke-opacity', polar==='night' ? '0.18':'0.55'); path.setAttribute('stroke-linecap','round');
+    g.appendChild(path);
+
+    const horizon = document.createElementNS(ns,'line');
+    horizon.setAttribute('x1',cx-r-30); horizon.setAttribute('x2',cx+r+30);
+    horizon.setAttribute('y1',cy); horizon.setAttribute('y2',cy);
+    horizon.setAttribute('stroke','#ffffff'); horizon.setAttribute('stroke-opacity','0.08');
+    g.appendChild(horizon);
+
+    if (polar !== 'night' && polar !== 'day'){
+      const dayMs = sunset - sunrise;
+      const frac = (new Date().getTime() - sunrise.getTime())/dayMs;
+      if (frac >= 0 && frac <= 1){
+        const angle = Math.PI*(1-frac);
+        const sx = cx + r*Math.cos(angle), sy = cy - r*Math.sin(angle);
+        const glow = document.createElementNS(ns,'circle');
+        glow.setAttribute('cx',sx); glow.setAttribute('cy',sy); glow.setAttribute('r',22);
+        glow.setAttribute('fill','#F5A742'); glow.setAttribute('opacity','0.22');
+        g.appendChild(glow);
+        const sun = document.createElementNS(ns,'circle');
+        sun.setAttribute('cx',sx); sun.setAttribute('cy',sy); sun.setAttribute('r',9);
+        sun.setAttribute('fill','#FBC978');
+        g.appendChild(sun);
+      }
+    } else {
+      const label = document.createElementNS(ns,'text');
+      label.setAttribute('x',cx); label.setAttribute('y',cy-40); label.setAttribute('text-anchor','middle');
+      label.setAttribute('fill','#B9C4D6'); label.setAttribute('font-size','12'); label.setAttribute('font-family','Inter');
+      label.textContent = polar==='night' ? 'Polar night — the sun stays below the horizon' : 'Midnight sun — the sun never sets';
+      g.appendChild(label);
+    }
+    els.arcSvg.appendChild(g);
+  }
+
+  function drawYearChart(lat, lon, year, highlightMonth){
+    const ns='http://www.w3.org/2000/svg', w=620,h=170,padL=10,padR=10,padT=14,padB=26;
+    els.yearSvg.innerHTML='';
+    const points = [];
+    for (let m=1;m<=12;m++){
+      const st = sunTimes(year, m, 15, lat, lon);
+      points.push(st.polar==='night' ? 0 : st.polar==='day' ? 24 : st.durationHours);
+    }
+    const plotW=w-padL-padR, plotH=h-padT-padB;
+    const xFor = i => padL + (i/11)*plotW;
+    const yFor = v => padT + (1-v/24)*plotH;
+    const g = document.createElementNS(ns,'g');
+
+    [6,12,18].forEach(v=>{
+      const y = yFor(v);
+      const l = document.createElementNS(ns,'line');
+      l.setAttribute('x1',padL); l.setAttribute('x2',w-padR); l.setAttribute('y1',y); l.setAttribute('y2',y);
+      l.setAttribute('stroke','#ffffff'); l.setAttribute('stroke-opacity','0.06');
+      g.appendChild(l);
+    });
+
+    let areaD = `M ${xFor(0)} ${yFor(points[0])} `;
+    points.forEach((v,i)=>{ if(i>0) areaD += `L ${xFor(i)} ${yFor(v)} `; });
+    areaD += `L ${xFor(11)} ${h-padB} L ${xFor(0)} ${h-padB} Z`;
+    const area = document.createElementNS(ns,'path');
+    area.setAttribute('d',areaD); area.setAttribute('fill','#F5A742'); area.setAttribute('opacity','0.08');
+    g.appendChild(area);
+
+    let d='';
+    points.forEach((v,i)=>{ d += (i===0?'M':'L') + xFor(i) + ' ' + yFor(v) + ' '; });
+    const path = document.createElementNS(ns,'path');
+    path.setAttribute('d',d.trim()); path.setAttribute('fill','none');
+    path.setAttribute('stroke','#F5A742'); path.setAttribute('stroke-width','2.5');
+    g.appendChild(path);
+
+    points.forEach((v,i)=>{
+      const x=xFor(i), y=yFor(v);
+      const dot = document.createElementNS(ns,'circle');
+      dot.setAttribute('cx',x); dot.setAttribute('cy',y); dot.setAttribute('r', i===highlightMonth?5:2.5);
+      dot.setAttribute('fill', i===highlightMonth ? '#FBC978' : '#F5A742');
+      dot.setAttribute('opacity', i===highlightMonth ? '1':'0.5');
+      g.appendChild(dot);
+    });
+
+    ['J','F','M','A','M','J','J','A','S','O','N','D'].forEach((lab,i)=>{
+      const t = document.createElementNS(ns,'text');
+      t.setAttribute('x',xFor(i)); t.setAttribute('y',h-8); t.setAttribute('text-anchor','middle');
+      t.setAttribute('font-family','Inter'); t.setAttribute('font-size','10');
+      t.setAttribute('fill', i===highlightMonth ? '#EDF1F7':'#8996AA');
+      t.textContent = lab;
+      g.appendChild(t);
+    });
+    els.yearSvg.appendChild(g);
+  }
+
+  function drawCompass(altitude, azimuth){
+    const ns='http://www.w3.org/2000/svg', cx=110, cy=110, R=88;
+    els.compassSvg.innerHTML='';
+    const g = document.createElementNS(ns,'g');
+    [0.33,0.66,1].forEach(f=>{
+      const c = document.createElementNS(ns,'circle');
+      c.setAttribute('cx',cx); c.setAttribute('cy',cy); c.setAttribute('r',R*f);
+      c.setAttribute('fill','none'); c.setAttribute('stroke','#ffffff'); c.setAttribute('stroke-opacity','0.09');
+      c.setAttribute('stroke-dasharray', f===1 ? '0':'3 4');
+      g.appendChild(c);
+    });
+    [['N',0],['E',90],['S',180],['W',270]].forEach(([lab,a])=>{
+      const arad=(a-90)*rad;
+      const x = cx + (R+14)*Math.cos(arad), y = cy + (R+14)*Math.sin(arad);
+      const t = document.createElementNS(ns,'text');
+      t.setAttribute('x',x); t.setAttribute('y',y+4); t.setAttribute('text-anchor','middle');
+      t.setAttribute('font-family','Inter'); t.setAttribute('font-size','11'); t.setAttribute('fill','#8996AA');
+      t.textContent = lab;
+      g.appendChild(t);
+    });
+    if (altitude > -2){
+      const rNorm = Math.max(0, (90-Math.max(altitude,0))/90) * R;
+      const arad = (azimuth-90)*rad;
+      const x = cx + rNorm*Math.cos(arad), y = cy + rNorm*Math.sin(arad);
+      const glow = document.createElementNS(ns,'circle');
+      glow.setAttribute('cx',x); glow.setAttribute('cy',y); glow.setAttribute('r',14);
+      glow.setAttribute('fill','#F5A742'); glow.setAttribute('opacity','0.25');
+      g.appendChild(glow);
+      const dot = document.createElementNS(ns,'circle');
+      dot.setAttribute('cx',x); dot.setAttribute('cy',y); dot.setAttribute('r',7);
+      dot.setAttribute('fill','#FBC978');
+      g.appendChild(dot);
+    } else {
+      const t = document.createElementNS(ns,'text');
+      t.setAttribute('x',cx); t.setAttribute('y',cy+4); t.setAttribute('text-anchor','middle');
+      t.setAttribute('font-family','Inter'); t.setAttribute('font-size','10'); t.setAttribute('fill','#8996AA');
+      t.textContent='Below horizon';
+      g.appendChild(t);
+    }
+    const centerDot = document.createElementNS(ns,'circle');
+    centerDot.setAttribute('cx',cx); centerDot.setAttribute('cy',cy); centerDot.setAttribute('r',2);
+    centerDot.setAttribute('fill','#8996AA');
+    g.appendChild(centerDot);
+    els.compassSvg.appendChild(g);
+  }
+
+  const MARKERS_MD = [[3,20,'the March equinox'],[6,21,'the June solstice'],[9,22,'the September equinox'],[12,21,'the December solstice']];
+  function nextMarker(now){
+    const y = now.getUTCFullYear();
+    for (const [m,d,label] of MARKERS_MD){
+      const dt = new Date(Date.UTC(y,m-1,d));
+      if (dt > now) return {label, days: Math.ceil((dt-now)/86400000)};
+    }
+    const dt = new Date(Date.UTC(y+1,2,20));
+    return {label:'the March equinox', days: Math.ceil((dt-now)/86400000)};
+  }
+
+  function updateGreeting(){
+    const now = new Date(new Date().getTime() + tzOffsetHours(current.lon)*3600000);
+    const h = now.getUTCHours();
+    const g = h < 12 ? 'Good morning ☀' : h < 17 ? 'Good afternoon ☀' : 'Good evening 🌙';
+    els.greeting.textContent = g;
+  }
+
+  function render(){
+    const dateVal = els.dateInput.value;
+    const [y,m,d] = dateVal.split('-').map(Number);
+    const st = sunTimes(y,m,d,current.lat,current.lon);
+
+    els.placeName.textContent = current.name;
+    els.placeCoords.textContent = `${current.lat.toFixed(2)}°, ${current.lon.toFixed(2)}°`;
+    updateGreeting();
+
+    if (st.polar === 'night' || st.polar === 'day'){
+      els.durationNum.textContent = st.polar==='night' ? '0h 00m' : '24h 00m';
+      els.sunriseTime.textContent = '—'; els.sunsetTime.textContent = '—';
+      els.noonTime.textContent = fmtLocalTime(st.transit, current.lon);
+      els.durationDelta.textContent = st.polar==='night' ? 'Polar night' : 'Midnight sun';
+      els.durationDelta.className = 'tile-delta delta-flat';
+      drawArc(null,null, st.polar);
+      els.insightBox.innerHTML = st.polar==='night'
+        ? 'The sun does not rise here today — this location is in <b>polar night</b>.'
+        : 'The sun does not set here today — this location is experiencing the <b>midnight sun</b>.';
+    } else {
+      els.durationNum.textContent = fmtDuration(st.durationHours);
+      els.sunriseTime.textContent = fmtLocalTime(st.sunrise, current.lon);
+      els.sunsetTime.textContent = fmtLocalTime(st.sunset, current.lon);
+      els.noonTime.textContent = fmtLocalTime(st.transit, current.lon);
+
+      const prev = new Date(Date.UTC(y,m-1,d)); prev.setUTCDate(prev.getUTCDate()-1);
+      const stPrev = sunTimes(prev.getUTCFullYear(), prev.getUTCMonth()+1, prev.getUTCDate(), current.lat, current.lon);
+      let diffMin = 0;
+      if (typeof stPrev.durationHours === 'number') diffMin = Math.round((st.durationHours - stPrev.durationHours)*60);
+      if (diffMin > 0){ els.durationDelta.textContent = `↑ +${diffMin} min vs yesterday`; els.durationDelta.className='tile-delta delta-up'; }
+      else if (diffMin < 0){ els.durationDelta.textContent = `↓ ${diffMin} min vs yesterday`; els.durationDelta.className='tile-delta delta-down'; }
+      else { els.durationDelta.textContent = 'Same as yesterday'; els.durationDelta.className='tile-delta delta-flat'; }
+
+      drawArc(st.sunrise, st.sunset, null);
+
+      const marker = nextMarker(new Date(Date.UTC(y,m-1,d,12)));
+      const trend = diffMin > 0 ? 'growing' : diffMin < 0 ? 'shrinking' : 'holding steady';
+      els.insightBox.innerHTML = `Daylight here is <b>${trend}</b> — about ${Math.abs(diffMin)} min ${diffMin>=0?'longer':'shorter'} than yesterday. At this rate, expect the trend to continue until around <b>${marker.label}</b>, roughly ${marker.days} days away.`;
+    }
+    drawYearChart(current.lat, current.lon, y, m-1);
+  }
+
+  function updateLive(){
+    const now = new Date();
+    const pos = solarPosition(now, current.lat, current.lon);
+    const altTxt = pos.altitude.toFixed(1) + '°';
+    const azTxt = pos.azimuth.toFixed(0) + '°';
+    els.chipAlt.textContent = altTxt; els.chipAz.textContent = azTxt;
+    els.compAlt.textContent = altTxt; els.compAz.textContent = azTxt;
+    drawCompass(pos.altitude, pos.azimuth);
+    const hh = String(now.getHours()).padStart(2,'0'), mm = String(now.getMinutes()).padStart(2,'0');
+    els.updatedAt.textContent = 'Updated ' + hh + ':' + mm;
+  }
+
+  function setToday(){
+    const now = new Date();
+    els.dateInput.value = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
+  }
+
+  function setCity(name, lat, lon){
+    current = { name, lat, lon };
+    els.cityInput.value=''; els.suggestions.hidden = true;
+    try { localStorage.setItem('daylight_last_place', JSON.stringify(current)); } catch(e){}
+    render(); updateLive();
+  }
+
+  function showSuggestions(query){
+    const q = query.trim().toLowerCase();
+    if (!q){ els.suggestions.hidden = true; return; }
+    const matches = CITIES.filter(c => c[0].toLowerCase().includes(q)).slice(0,8);
+    if (!matches.length){ els.suggestions.hidden = true; return; }
+    els.suggestions.innerHTML = '';
+    matches.forEach(([name,lat,lon])=>{
+      const btn = document.createElement('button'); btn.type='button'; btn.textContent = name;
+      btn.addEventListener('click', ()=> setCity(name,lat,lon));
+      els.suggestions.appendChild(btn);
+    });
+    els.suggestions.hidden = false;
+  }
+
+  els.cityInput.addEventListener('input', e => showSuggestions(e.target.value));
+  els.cityInput.addEventListener('blur', ()=> setTimeout(()=>{ els.suggestions.hidden = true; },150));
+  els.cityInput.addEventListener('keydown', e=>{
+    if (e.key==='Enter'){
+      const q = e.target.value.trim().toLowerCase();
+      const match = CITIES.find(c => c[0].toLowerCase().includes(q));
+      if (match) setCity(match[0], match[1], match[2]);
+    }
+  });
+  els.locateBtn.addEventListener('click', ()=>{
+    if (!navigator.geolocation) return;
+    els.locateBtn.textContent='…';
+    navigator.geolocation.getCurrentPosition(
+      pos => { els.locateBtn.textContent='⌖'; setCity('Your location', pos.coords.latitude, pos.coords.longitude); },
+      () => { els.locateBtn.textContent='⌖'; },
+      { timeout: 8000 }
+    );
+  });
+  els.dateInput.addEventListener('change', render);
+  els.todayBtn.addEventListener('click', ()=>{ setToday(); render(); });
+
+  try {
+    const saved = JSON.parse(localStorage.getItem('daylight_last_place') || 'null');
+    if (saved && typeof saved.lat === 'number') current = saved;
+  } catch(e){}
+
+  setToday();
+  render();
+  updateLive();
+  setInterval(updateLive, 30000);
+})();
+</script>
+</body>
+</html>
