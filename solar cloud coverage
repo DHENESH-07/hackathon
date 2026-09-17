@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cloud Coverage — SolarQuest</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#070C16;
+    --panel:#101B2E;
+    --panel-2:#0C1526;
+    --line:rgba(255,255,255,.07);
+    --text:#EDF1F7;
+    --text-dim:#8996AA;
+    --gold:#F5A742;
+    --gold-soft:#FBC978;
+    --blue:#4C8DFF;
+    --sky:#7FB3E8;
+    --purple:#A78BFA;
+    --green:#34D399;
+    --red:#F17171;
+    font-size:16px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(1100px 500px at 15% -10%, #12213B 0%, transparent 60%),
+      radial-gradient(900px 500px at 100% 0%, #16233d80 0%, transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    padding:1.5rem 1.5rem 3.5rem;
+  }
+  .wrap{max-width:1180px;margin:0 auto;}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.4rem;flex-wrap:wrap;gap:.75rem;}
+  .brand{display:flex;align-items:center;gap:.65rem;}
+  .brand-mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--gold),#D9861F);
+    display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px #F5A74240;}
+  .brand-name{font-weight:700;font-size:1rem;letter-spacing:-.01em;}
+  .brand-page{color:var(--text-dim);font-size:.78rem;margin-top:1px;}
+  .status{display:flex;align-items:center;gap:1rem;font-size:.78rem;color:var(--text-dim);}
+  .live{display:flex;align-items:center;gap:.4rem;color:var(--green);font-weight:600;}
+  .live.offline{color:var(--red);}
+  .live .dot{width:7px;height:7px;border-radius:50%;background:currentColor;animation:pulse 2s infinite;}
+  @media (prefers-reduced-motion:reduce){.live .dot{animation:none;}}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(52,211,153,.5);}70%{box-shadow:0 0 0 7px rgba(52,211,153,0);}100%{box-shadow:0 0 0 0 rgba(52,211,153,0);}}
+
+  .hero{position:relative;border-radius:22px;overflow:hidden;border:1px solid var(--line);
+    background:radial-gradient(500px 260px at 78% 15%, #2A466F55 0%, transparent 70%),
+      linear-gradient(180deg,#132443 0%, #0C1730 55%, #081020 100%);
+    padding:1.9rem 1.9rem 2.2rem;margin-bottom:1.1rem;}
+  .hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:1.5rem;flex-wrap:wrap;}
+  .hero h1{font-size:1.5rem;font-weight:700;margin:0 0 .3rem;letter-spacing:-.01em;}
+  .hero .sub{color:#B9C4D6;font-size:.88rem;margin:0;max-width:34ch;}
+
+  .gauge-block{display:flex;align-items:center;gap:1.1rem;}
+  .gauge-wrap{position:relative;width:120px;height:120px;flex-shrink:0;}
+  .gauge-wrap svg{width:100%;height:100%;}
+  .gauge-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .gauge-num .n{font-size:1.6rem;font-weight:800;line-height:1;}
+  .gauge-num .l{font-size:.62rem;color:var(--text-dim);margin-top:.15rem;}
+  .gauge-label{font-size:.8rem;}
+  .gauge-label .cond{font-weight:700;font-size:1rem;display:block;margin-bottom:.2rem;}
+  .badge{display:inline-flex;align-items:center;gap:.3rem;font-size:.72rem;font-weight:600;padding:.2rem .6rem;border-radius:20px;}
+  .badge-good{background:#34D39922;color:var(--green);}
+  .badge-mid{background:#F5A74222;color:var(--gold);}
+  .badge-bad{background:#F1717122;color:var(--red);}
+
+  .loc-row{display:flex;align-items:center;gap:.9rem;flex-wrap:wrap;margin-top:1.2rem;}
+  .loc-current{display:flex;align-items:center;gap:.6rem;color:#CBD5E6;font-size:.85rem;}
+  .loc-current b{color:var(--text);font-weight:600;}
+
+  .search-row{display:flex;gap:.5rem;margin-top:.9rem;position:relative;max-width:420px;}
+  .search-box{position:relative;flex:1;}
+  input[type="text"]{width:100%;background:#0B172AB0;border:1px solid var(--line);color:var(--text);
+    font-family:'Inter',sans-serif;font-size:.88rem;padding:.7rem .95rem;border-radius:10px;outline:none;}
+  input[type="text"]::placeholder{color:var(--text-dim);}
+  input[type="text"]:focus{border-color:var(--gold);box-shadow:0 0 0 3px #F5A74226;}
+  .suggestions{position:absolute;top:calc(100% + 6px);left:0;right:0;background:#101B2E;border:1px solid var(--line);
+    border-radius:10px;overflow:hidden;z-index:20;max-height:240px;overflow-y:auto;box-shadow:0 16px 34px #00000060;}
+  .suggestions button{display:block;width:100%;text-align:left;background:none;border:none;color:var(--text);
+    font-family:'Inter',sans-serif;font-size:.85rem;padding:.6rem .9rem;cursor:pointer;}
+  .suggestions button:hover,.suggestions button:focus-visible{background:#F5A74220;}
+  .locate-btn{background:#0B172AB0;border:1px solid var(--line);color:var(--text);border-radius:10px;
+    padding:0 .95rem;cursor:pointer;font-size:1rem;}
+  .locate-btn:hover{border-color:var(--gold);color:var(--gold-soft);}
+  button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+
+  .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.1rem;}
+  @media (max-width:820px){.tiles{grid-template-columns:repeat(2,1fr);}}
+  .tile{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:1.1rem 1.15rem;}
+  .tile-top{display:flex;align-items:center;gap:.6rem;margin-bottom:.7rem;}
+  .icon-badge{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .tile-label{color:var(--text-dim);font-size:.78rem;}
+  .tile-num{font-size:1.5rem;font-weight:700;letter-spacing:-.01em;font-variant-numeric:tabular-nums;}
+  .tile-sub{font-size:.72rem;color:var(--text-dim);margin-top:.4rem;}
+
+  .grid2{display:grid;grid-template-columns:1.6fr 1fr;gap:1.1rem;}
+  @media (max-width:900px){.grid2{grid-template-columns:1fr;}}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:1.4rem 1.5rem;}
+  .panel h2{font-size:.85rem;font-weight:600;margin:0 0 .2rem;}
+  .panel .desc{color:var(--text-dim);font-size:.76rem;margin:0 0 1rem;}
+
+  .hourly-chart{width:100%;height:auto;display:block;}
+
+  .impact-row{display:flex;flex-direction:column;gap:.7rem;margin-top:.2rem;}
+  .impact-item{display:flex;justify-content:space-between;align-items:center;padding:.7rem .85rem;border-radius:12px;background:var(--panel-2);border:1px solid var(--line);}
+  .impact-item .k{font-size:.8rem;color:var(--text-dim);}
+  .impact-item .v{font-weight:700;font-size:.9rem;}
+
+  .note{color:var(--text-dim);font-size:.7rem;margin-top:1.3rem;line-height:1.5;text-align:center;}
+  .error-box{background:#F1717118;border:1px solid #F1717140;color:#FFC9C9;border-radius:12px;padding:.8rem 1rem;font-size:.8rem;margin-top:1rem;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4.5" fill="#0B1220"/><g stroke="#0B1220" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1.5" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22.5"/><line x1="1.5" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22.5" y2="12"/><line x1="4.4" y1="4.4" x2="6.1" y2="6.1"/><line x1="17.9" y1="17.9" x2="19.6" y2="19.6"/><line x1="4.4" y1="19.6" x2="6.1" y2="17.9"/><line x1="17.9" y1="6.1" x2="19.6" y2="4.4"/></g></svg>
+      </div>
+      <div>
+        <div class="brand-name">SolarQuest</div>
+        <div class="brand-page">Cloud coverage</div>
+      </div>
+    </div>
+    <div class="status">
+      <span class="live" id="liveBadge"><span class="dot"></span>Live</span>
+      <span id="updatedAt">Updated —</span>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-top">
+      <div>
+        <h1>How cloudy is it there?</h1>
+        <p class="sub">Live cloud cover for any location, and what it means for solar generation.</p>
+      </div>
+
+      <div class="gauge-block">
+        <div class="gauge-wrap">
+          <svg viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="50" fill="none" stroke="#ffffff14" stroke-width="10"/>
+            <circle id="gaugeArc" cx="60" cy="60" r="50" fill="none" stroke="#7FB3E8" stroke-width="10"
+              stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314" transform="rotate(-90 60 60)"/>
+          </svg>
+          <div class="gauge-num"><span class="n" id="gaugeNum">–</span><span class="l">cloud cover</span></div>
+        </div>
+        <div class="gauge-label">
+          <span class="cond" id="skyCondition">Loading…</span>
+          <span class="badge badge-mid" id="impactBadge">Checking impact</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="loc-row">
+      <div class="loc-current">
+        <span>📍</span><span><b id="placeName">Chennai, India</b> · <span id="placeCoords">13.08°, 80.27°</span></span>
+      </div>
+    </div>
+    <div class="search-row">
+      <div class="search-box">
+        <input type="text" id="cityInput" placeholder="Search a city…" autocomplete="off" aria-label="Search for a city">
+        <div class="suggestions" id="suggestions" hidden></div>
+      </div>
+      <button class="locate-btn" id="locateBtn" title="Use my location" aria-label="Use my location">⌖</button>
+    </div>
+    <div class="error-box" id="errorBox" hidden></div>
+  </div>
+
+  <div class="tiles">
+    <div class="tile">
+      <div class="tile-top">
+        <div class="icon-badge" style="background:#7FB3E822;color:var(--sky);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19a4.5 4.5 0 0 0 0-9 6 6 0 0 0-11.6-1.6A4.5 4.5 0 0 0 6.5 19h11z"/></svg>
+        </div>
+        <span class="tile-label">Cloud cover now</span>
+      </div>
+      <div class="tile-num" id="cloudNow">–</div>
+      <div class="tile-sub" id="cloudNowSub">Live via Open‑Meteo</div>
+    </div>
+
+    <div class="tile">
+      <div class="tile-top">
+        <div class="icon-badge" style="background:#F5A74222;color:var(--gold);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><line x1="12" y1="1.5" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22.5"/><line x1="1.5" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22.5" y2="12"/></svg>
+        </div>
+        <span class="tile-label">Air temperature</span>
+      </div>
+      <div class="tile-num" id="tempNow">–</div>
+      <div class="tile-sub">At this location</div>
+    </div>
+
+    <div class="tile">
+      <div class="tile-top">
+        <div class="icon-badge" style="background:#34D39922;color:var(--green);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+        </div>
+        <span class="tile-label">Clearest hour today</span>
+      </div>
+      <div class="tile-num" id="clearestHour">–</div>
+      <div class="tile-sub" id="clearestHourSub">Best window for generation</div>
+    </div>
+
+    <div class="tile">
+      <div class="tile-top">
+        <div class="icon-badge" style="background:#A78BFA22;color:var(--purple);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg>
+        </div>
+        <span class="tile-label">Cloudiest hour today</span>
+      </div>
+      <div class="tile-num" id="cloudiestHour">–</div>
+      <div class="tile-sub" id="cloudiestHourSub">Expect lower output</div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="panel">
+      <h2>Cloud cover, next 24 hours</h2>
+      <p class="desc">Hourly forecast for this location</p>
+      <svg id="hourlySvg" class="hourly-chart" viewBox="0 0 620 180" preserveAspectRatio="xMidYMid meet"></svg>
+    </div>
+
+    <div class="panel">
+      <h2>What this means for solar</h2>
+      <p class="desc">Rough guide based on current cloud cover</p>
+      <div class="impact-row">
+        <div class="impact-item"><span class="k">0–20% cover</span><span class="v" style="color:var(--green)">Favorable</span></div>
+        <div class="impact-item"><span class="k">21–50% cover</span><span class="v" style="color:var(--gold)">Moderate</span></div>
+        <div class="impact-item"><span class="k">51–100% cover</span><span class="v" style="color:var(--red)">Reduced</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">Cloud cover and temperature are live data from the Open‑Meteo forecast API. Solar-impact bands are a general guide, not a precise output estimate.</div>
+</div>
+
+<script>
+(function(){
+  const CITIES = [
+    ["Chennai, India",13.0827,80.2707],["Mumbai, India",19.0760,72.8777],["Delhi, India",28.6139,77.2090],
+    ["Bengaluru, India",12.9716,77.5946],["Kolkata, India",22.5726,88.3639],
+    ["London, UK",51.5074,-0.1278],["Paris, France",48.8566,2.3522],["Berlin, Germany",52.5200,13.4050],
+    ["Madrid, Spain",40.4168,-3.7038],["Rome, Italy",41.9028,12.4964],["Amsterdam, Netherlands",52.3676,4.9041],
+    ["Reykjavik, Iceland",64.1466,-21.9426],["Tromsø, Norway",69.6492,18.9553],["Oslo, Norway",59.9139,10.7522],
+    ["Stockholm, Sweden",59.3293,18.0686],["Helsinki, Finland",60.1699,24.9384],["Moscow, Russia",55.7558,37.6173],
+    ["Istanbul, Türkiye",41.0082,28.9784],["Cairo, Egypt",30.0444,31.2357],["Lagos, Nigeria",6.5244,3.3792],
+    ["Nairobi, Kenya",-1.2921,36.8219],["Cape Town, South Africa",-33.9249,18.4241],["Johannesburg, South Africa",-26.2041,28.0473],
+    ["Dubai, UAE",25.2048,55.2708],["Tel Aviv, Israel",32.0853,34.7818],["Riyadh, Saudi Arabia",24.7136,46.6753],
+    ["Tokyo, Japan",35.6762,139.6503],["Osaka, Japan",34.6937,135.5023],["Seoul, South Korea",37.5665,126.9780],
+    ["Beijing, China",39.9042,116.4074],["Shanghai, China",31.2304,121.4737],["Hong Kong",22.3193,114.1694],
+    ["Singapore",1.3521,103.8198],["Bangkok, Thailand",13.7563,100.5018],["Jakarta, Indonesia",-6.2088,106.8456],
+    ["Manila, Philippines",14.5995,120.9842],["Kuala Lumpur, Malaysia",3.1390,101.6869],["Sydney, Australia",-33.8688,151.2093],
+    ["Melbourne, Australia",-37.8136,144.9631],["Perth, Australia",-31.9505,115.8605],["Auckland, New Zealand",-36.8485,174.7633],
+    ["New York, USA",40.7128,-74.0060],["Los Angeles, USA",34.0522,-118.2437],["Chicago, USA",41.8781,-87.6298],
+    ["Miami, USA",25.7617,-80.1918],["Toronto, Canada",43.6532,-79.3832],["Vancouver, Canada",49.2827,-123.1207],
+    ["Mexico City, Mexico",19.4326,-99.1332],["Rio de Janeiro, Brazil",-22.9068,-43.1729],["São Paulo, Brazil",-23.5505,-46.6333],
+    ["Buenos Aires, Argentina",-34.6037,-58.3816],["Santiago, Chile",-33.4489,-70.6693],["Lima, Peru",-12.0464,-77.0428],
+    ["Bogotá, Colombia",4.7110,-74.0721],["Athens, Greece",37.9838,23.7275],["Vienna, Austria",48.2082,16.3738],
+    ["Warsaw, Poland",52.2297,21.0122],["Dublin, Ireland",53.3498,-6.2603],["Lisbon, Portugal",38.7223,-9.1393],
+    ["Zurich, Switzerland",47.3769,8.5417]
+  ];
+
+  const els = {};
+  ['cityInput','suggestions','locateBtn','placeName','placeCoords','gaugeArc','gaugeNum','skyCondition',
+   'impactBadge','cloudNow','cloudNowSub','tempNow','clearestHour','clearestHourSub','cloudiestHour',
+   'cloudiestHourSub','hourlySvg','updatedAt','liveBadge','errorBox'].forEach(id => els[id] = document.getElementById(id));
+
+  let current = { name: "Chennai, India", lat: 13.0827, lon: 80.2707 };
+  const GAUGE_CIRCUMFERENCE = 2 * Math.PI * 50;
+
+  function skyCondition(pct){
+    if (pct <= 10) return 'Clear sky';
+    if (pct <= 30) return 'Mostly clear';
+    if (pct <= 60) return 'Partly cloudy';
+    if (pct <= 85) return 'Mostly cloudy';
+    return 'Overcast';
+  }
+  function impactBand(pct){
+    if (pct <= 20) return { label:'Favorable for solar', cls:'badge-good' };
+    if (pct <= 50) return { label:'Moderate impact', cls:'badge-mid' };
+    return { label:'Reduced output likely', cls:'badge-bad' };
+  }
+  function gaugeColor(pct){
+    if (pct <= 20) return '#34D399';
+    if (pct <= 50) return '#F5A742';
+    return '#7FB3E8';
+  }
+
+  function setGauge(pct){
+    const offset = GAUGE_CIRCUMFERENCE * (1 - pct/100);
+    els.gaugeArc.style.strokeDashoffset = offset;
+    els.gaugeArc.setAttribute('stroke', gaugeColor(pct));
+    els.gaugeNum.textContent = Math.round(pct) + '%';
+  }
+
+  function drawHourlyChart(times, values, nowIndex){
+    const ns='http://www.w3.org/2000/svg', w=620,h=180,padL=10,padR=10,padT=14,padB=26;
+    els.hourlySvg.innerHTML='';
+    const n = values.length;
+    const plotW=w-padL-padR, plotH=h-padT-padB;
+    const xFor = i => padL + (i/(n-1))*plotW;
+    const yFor = v => padT + (1-v/100)*plotH;
+    const g = document.createElementNS(ns,'g');
+
+    [25,50,75].forEach(v=>{
+      const y = yFor(v);
+      const l = document.createElementNS(ns,'line');
+      l.setAttribute('x1',padL); l.setAttribute('x2',w-padR); l.setAttribute('y1',y); l.setAttribute('y2',y);
+      l.setAttribute('stroke','#ffffff'); l.setAttribute('stroke-opacity','0.06');
+      g.appendChild(l);
+    });
+
+    let areaD = `M ${xFor(0)} ${yFor(values[0])} `;
+    values.forEach((v,i)=>{ if(i>0) areaD += `L ${xFor(i)} ${yFor(v)} `; });
+    areaD += `L ${xFor(n-1)} ${h-padB} L ${xFor(0)} ${h-padB} Z`;
+    const area = document.createElementNS(ns,'path');
+    area.setAttribute('d',areaD); area.setAttribute('fill','#7FB3E8'); area.setAttribute('opacity','0.12');
+    g.appendChild(area);
+
+    let d='';
+    values.forEach((v,i)=>{ d += (i===0?'M':'L') + xFor(i) + ' ' + yFor(v) + ' '; });
+    const path = document.createElementNS(ns,'path');
+    path.setAttribute('d',d.trim()); path.setAttribute('fill','none');
+    path.setAttribute('stroke','#7FB3E8'); path.setAttribute('stroke-width','2.5');
+    g.appendChild(path);
+
+    values.forEach((v,i)=>{
+      if (i % 3 !== 0 && i !== nowIndex) return;
+      const x=xFor(i), y=yFor(v);
+      const dot = document.createElementNS(ns,'circle');
+      dot.setAttribute('cx',x); dot.setAttribute('cy',y); dot.setAttribute('r', i===nowIndex?5:2.5);
+      dot.setAttribute('fill', i===nowIndex ? '#FBC978' : '#7FB3E8');
+      g.appendChild(dot);
+    });
+
+    times.forEach((t,i)=>{
+      if (i % 3 !== 0) return;
+      const hour = new Date(t).getHours();
+      const label = (hour%12===0?12:hour%12) + (hour<12?'a':'p');
+      const x = xFor(i);
+      const txt = document.createElementNS(ns,'text');
+      txt.setAttribute('x',x); txt.setAttribute('y',h-8); txt.setAttribute('text-anchor','middle');
+      txt.setAttribute('font-family','Inter'); txt.setAttribute('font-size','10');
+      txt.setAttribute('fill', i===nowIndex ? '#EDF1F7':'#8996AA');
+      txt.textContent = label;
+      g.appendChild(txt);
+    });
+    els.hourlySvg.appendChild(g);
+  }
+
+  function fmtHourLabel(iso){
+    const d = new Date(iso);
+    let h = d.getHours();
+    const ampm = h >= 12 ? 'PM':'AM';
+    let h12 = h % 12; if (h12===0) h12=12;
+    return h12 + ' ' + ampm;
+  }
+
+  async function loadWeather(){
+    els.errorBox.hidden = true;
+    els.liveBadge.classList.remove('offline');
+    try {
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${current.lat}&longitude=${current.lon}&current=cloud_cover,temperature_2m&hourly=cloud_cover&forecast_days=2&timezone=auto`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Weather service returned ' + res.status);
+      const data = await res.json();
+
+      const nowCloud = data.current.cloud_cover;
+      const nowTemp = data.current.temperature_2m;
+      const unit = (data.current_units && data.current_units.temperature_2m) || '°C';
+
+      setGauge(nowCloud);
+      els.skyCondition.textContent = skyCondition(nowCloud);
+      const band = impactBand(nowCloud);
+      els.impactBadge.textContent = band.label;
+      els.impactBadge.className = 'badge ' + band.cls;
+      els.cloudNow.textContent = Math.round(nowCloud) + '%';
+      els.tempNow.textContent = Math.round(nowTemp) + unit;
+
+      const times = data.hourly.time;
+      const values = data.hourly.cloud_cover;
+      const nowISO = data.current.time;
+      let nowIndex = times.findIndex(t => t === nowISO);
+      if (nowIndex === -1) nowIndex = 0;
+      const windowTimes = times.slice(nowIndex, nowIndex+24);
+      const windowValues = values.slice(nowIndex, nowIndex+24);
+      drawHourlyChart(windowTimes, windowValues, 0);
+
+      let minIdx = 0, maxIdx = 0;
+      windowValues.forEach((v,i)=>{
+        if (v < windowValues[minIdx]) minIdx = i;
+        if (v > windowValues[maxIdx]) maxIdx = i;
+      });
+      els.clearestHour.textContent = fmtHourLabel(windowTimes[minIdx]);
+      els.clearestHourSub.textContent = Math.round(windowValues[minIdx]) + '% cloud cover';
+      els.cloudiestHour.textContent = fmtHourLabel(windowTimes[maxIdx]);
+      els.cloudiestHourSub.textContent = Math.round(windowValues[maxIdx]) + '% cloud cover';
+
+      const now = new Date();
+      els.updatedAt.textContent = 'Updated ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+    } catch (err) {
+      els.liveBadge.classList.add('offline');
+      els.liveBadge.innerHTML = '<span class="dot"></span>Offline';
+      els.errorBox.hidden = false;
+      els.errorBox.textContent = "Couldn't reach the weather service — check your connection and try again.";
+    }
+  }
+
+  function setCity(name, lat, lon){
+    current = { name, lat, lon };
+    els.placeName.textContent = name;
+    els.placeCoords.textContent = `${lat.toFixed(2)}°, ${lon.toFixed(2)}°`;
+    els.cityInput.value=''; els.suggestions.hidden = true;
+    try { localStorage.setItem('cloud_last_place', JSON.stringify(current)); } catch(e){}
+    loadWeather();
+  }
+
+  function showSuggestions(query){
+    const q = query.trim().toLowerCase();
+    if (!q){ els.suggestions.hidden = true; return; }
+    const matches = CITIES.filter(c => c[0].toLowerCase().includes(q)).slice(0,8);
+    if (!matches.length){ els.suggestions.hidden = true; return; }
+    els.suggestions.innerHTML = '';
+    matches.forEach(([name,lat,lon])=>{
+      const btn = document.createElement('button'); btn.type='button'; btn.textContent = name;
+      btn.addEventListener('click', ()=> setCity(name,lat,lon));
+      els.suggestions.appendChild(btn);
+    });
+    els.suggestions.hidden = false;
+  }
+
+  els.cityInput.addEventListener('input', e => showSuggestions(e.target.value));
+  els.cityInput.addEventListener('blur', ()=> setTimeout(()=>{ els.suggestions.hidden = true; },150));
+  els.cityInput.addEventListener('keydown', e=>{
+    if (e.key==='Enter'){
+      const q = e.target.value.trim().toLowerCase();
+      const match = CITIES.find(c => c[0].toLowerCase().includes(q));
+      if (match) setCity(match[0], match[1], match[2]);
+    }
+  });
+  els.locateBtn.addEventListener('click', ()=>{
+    if (!navigator.geolocation) return;
+    els.locateBtn.textContent='…';
+    navigator.geolocation.getCurrentPosition(
+      pos => { els.locateBtn.textContent='⌖'; setCity('Your location', pos.coords.latitude, pos.coords.longitude); },
+      () => { els.locateBtn.textContent='⌖'; },
+      { timeout: 8000 }
+    );
+  });
+
+  try {
+    const saved = JSON.parse(localStorage.getItem('cloud_last_place') || 'null');
+    if (saved && typeof saved.lat === 'number') current = saved;
+  } catch(e){}
+
+  els.placeName.textContent = current.name;
+  els.placeCoords.textContent = `${current.lat.toFixed(2)}°, ${current.lon.toFixed(2)}°`;
+  loadWeather();
+  setInterval(loadWeather, 10 * 60 * 1000);
+})();
+</script>
+</body>
+</html>
