@@ -1,0 +1,1846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SolarQuest - Sunlight Intelligence</title>
+
+<style>
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    color: white;
+    min-height: 100vh;
+
+    background:
+        radial-gradient(circle at 75% 15%, rgba(255, 180, 40, 0.15), transparent 25%),
+        radial-gradient(circle at 10% 90%, rgba(0, 140, 255, 0.15), transparent 30%),
+        linear-gradient(135deg, #020b18, #061b32 45%, #03101f);
+
+    overflow-x: hidden;
+}
+
+/* ================= SIDEBAR ================= */
+
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 225px;
+    height: 100vh;
+
+    background: rgba(2, 12, 27, 0.92);
+    border-right: 1px solid rgba(255,255,255,0.08);
+
+    padding: 22px 15px;
+
+    z-index: 10;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.logo-icon {
+    font-size: 34px;
+}
+
+.logo h1 {
+    font-size: 20px;
+}
+
+.logo span {
+    color: #ffbf3f;
+}
+
+.logo small {
+    display: block;
+    font-size: 8px;
+    color: #9baabd;
+    margin-top: 3px;
+}
+
+.menu-title {
+    color: #69788d;
+    font-size: 11px;
+    margin: 18px 10px 8px;
+    text-transform: uppercase;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+
+    padding: 12px;
+    margin-bottom: 4px;
+
+    border-radius: 9px;
+    color: #b9c5d4;
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.menu-item:hover,
+.menu-item.active {
+    background: linear-gradient(
+        90deg,
+        rgba(0, 128, 255, 0.35),
+        rgba(0, 128, 255, 0.1)
+    );
+
+    color: white;
+}
+
+.menu-icon {
+    width: 20px;
+    text-align: center;
+}
+
+.profile {
+    position: absolute;
+    bottom: 20px;
+    left: 15px;
+    right: 15px;
+
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 15px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-circle {
+    width: 35px;
+    height: 35px;
+
+    border-radius: 50%;
+    background: linear-gradient(135deg,#8295a8,#25384c);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ================= MAIN ================= */
+
+.main {
+    margin-left: 225px;
+    padding: 25px;
+    max-width: 1700px;
+}
+
+/* ================= TOPBAR ================= */
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 20px;
+}
+
+.live {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    padding: 7px 12px;
+
+    border-radius: 20px;
+
+    background: rgba(0, 255, 180, 0.08);
+    border: 1px solid rgba(0,255,180,0.15);
+
+    font-size: 12px;
+}
+
+.live-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #00e6a8;
+    box-shadow: 0 0 10px #00e6a8;
+}
+
+/* ================= HERO ================= */
+
+.hero {
+    min-height: 220px;
+
+    border-radius: 20px;
+
+    padding: 30px;
+
+    position: relative;
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(3,16,33,0.98),
+            rgba(5,40,65,0.78),
+            rgba(5,40,65,0.35)
+        );
+
+    border: 1px solid rgba(255,255,255,0.1);
+
+    box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+}
+
+.hero::after {
+    content: "☀";
+    position: absolute;
+
+    right: 8%;
+    top: 25px;
+
+    font-size: 120px;
+
+    color: #ffd45a;
+    opacity: 0.25;
+
+    filter: blur(2px);
+}
+
+.hero h2 {
+    font-size: 28px;
+    margin-bottom: 7px;
+}
+
+.hero h2 span {
+    color: #ffbd3d;
+}
+
+.hero-sub {
+    color: #9db1c7;
+    margin-bottom: 20px;
+}
+
+.location-info {
+    display: flex;
+    gap: 25px;
+    flex-wrap: wrap;
+
+    color: #aebfd0;
+    font-size: 13px;
+}
+
+.location-info strong {
+    color: white;
+}
+
+.buttons {
+    margin-top: 22px;
+    display: flex;
+    gap: 10px;
+}
+
+button {
+    border: none;
+    cursor: pointer;
+
+    padding: 11px 18px;
+
+    border-radius: 9px;
+
+    font-weight: bold;
+    color: white;
+
+    transition: 0.2s;
+}
+
+.primary {
+    background: linear-gradient(135deg,#ffbe3b,#ff9d22);
+    color: #111;
+}
+
+.secondary {
+    background: rgba(0,120,255,0.15);
+    border: 1px solid #2488d9;
+}
+
+button:hover {
+    transform: translateY(-2px);
+}
+
+/* ================= SEARCH ================= */
+
+.search-box {
+    display: flex;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.search-box input {
+    width: 250px;
+
+    padding: 10px 14px;
+
+    border-radius: 8px;
+
+    border: 1px solid rgba(255,255,255,0.15);
+
+    background: rgba(0,0,0,0.25);
+
+    color: white;
+
+    outline: none;
+}
+
+.search-box input::placeholder {
+    color: #8091a5;
+}
+
+/* ================= SECTION ================= */
+
+.section-title {
+    font-size: 17px;
+    margin: 20px 0 10px;
+}
+
+/* ================= CARDS ================= */
+
+.cards {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 12px;
+}
+
+.card {
+    background:
+        linear-gradient(
+            145deg,
+            rgba(15,58,88,0.75),
+            rgba(4,27,49,0.9)
+        );
+
+    border: 1px solid rgba(100,180,230,0.16);
+
+    border-radius: 14px;
+
+    padding: 18px;
+
+    min-height: 125px;
+
+    box-shadow:
+        inset 0 1px rgba(255,255,255,0.04),
+        0 10px 25px rgba(0,0,0,0.15);
+}
+
+.card-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    color: #a8bdd0;
+    font-size: 13px;
+}
+
+.card-icon {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 50%;
+
+    background: rgba(255,190,40,0.12);
+
+    font-size: 23px;
+}
+
+.card-value {
+    font-size: 25px;
+    font-weight: bold;
+
+    margin-top: 13px;
+}
+
+.card-value.orange {
+    color: #ffc348;
+}
+
+.card-value.green {
+    color: #35e5a5;
+}
+
+.card-description {
+    font-size: 11px;
+    color: #71879c;
+    margin-top: 5px;
+}
+
+/* ================= TWO COLUMN ================= */
+
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 12px;
+
+    margin-top: 12px;
+}
+
+/* ================= SUN CARD ================= */
+
+.sun-card {
+    background: rgba(4,27,49,0.75);
+
+    border: 1px solid rgba(100,180,230,0.15);
+
+    border-radius: 15px;
+
+    padding: 20px;
+}
+
+.sun-card h3 {
+    margin-bottom: 20px;
+}
+
+.sun-visual {
+    height: 250px;
+
+    position: relative;
+
+    border-radius: 12px;
+
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            to bottom,
+            #102f4a,
+            #173e4c 45%,
+            #091b2c
+        );
+}
+
+/* SUN */
+
+.sun {
+    width: 70px;
+    height: 70px;
+
+    border-radius: 50%;
+
+    background: #ffd34d;
+
+    box-shadow:
+        0 0 30px #ffc62e,
+        0 0 70px rgba(255,180,30,0.5);
+
+    position: absolute;
+
+    left: 50%;
+    top: 25px;
+
+    transform: translateX(-50%);
+}
+
+/* HORIZON */
+
+.horizon {
+    position: absolute;
+
+    bottom: 0;
+
+    width: 100%;
+    height: 75px;
+
+    background:
+        linear-gradient(
+            to top,
+            #020b16,
+            transparent
+        );
+}
+
+.sun-info {
+    position: absolute;
+
+    bottom: 18px;
+    left: 20px;
+
+    font-size: 13px;
+    color: #b7c7d5;
+}
+
+/* ================= SUN TIMES ================= */
+
+.times {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    gap: 10px;
+
+    margin-top: 15px;
+}
+
+.time-box {
+    padding: 15px;
+
+    border-radius: 10px;
+
+    background: rgba(0,0,0,0.18);
+
+    border: 1px solid rgba(255,255,255,0.07);
+}
+
+.time-label {
+    color: #8398ac;
+    font-size: 12px;
+}
+
+.time-value {
+    font-size: 23px;
+
+    margin-top: 5px;
+}
+
+.sunrise {
+    color: #ffd05a;
+}
+
+.sunset {
+    color: #ff9c50;
+}
+
+/* ================= LOCATION CARD ================= */
+
+.location-card {
+    background: rgba(4,27,49,0.75);
+
+    border: 1px solid rgba(100,180,230,0.15);
+
+    border-radius: 15px;
+
+    padding: 20px;
+}
+
+.coordinates {
+    margin-top: 15px;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    gap: 10px;
+}
+
+.coordinate {
+    padding: 13px;
+
+    border-radius: 9px;
+
+    background: rgba(0,0,0,0.2);
+}
+
+.coordinate small {
+    color: #71879b;
+}
+
+.coordinate strong {
+    display: block;
+    margin-top: 4px;
+}
+
+/* ================= WEATHER ================= */
+
+.weather-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 10px;
+
+    margin-top: 15px;
+}
+
+.weather-box {
+    background: rgba(0,0,0,0.18);
+
+    border-radius: 10px;
+
+    padding: 14px;
+
+    text-align: center;
+}
+
+.weather-icon {
+    font-size: 24px;
+}
+
+.weather-value {
+    font-size: 18px;
+    margin-top: 7px;
+}
+
+.weather-label {
+    color: #7890a5;
+    font-size: 10px;
+}
+
+/* ================= PROGRESS ================= */
+
+.progress-container {
+    margin-top: 20px;
+}
+
+.progress-bar {
+    height: 13px;
+
+    border-radius: 20px;
+
+    background: #0b263e;
+
+    overflow: hidden;
+}
+
+.progress {
+    width: 0%;
+
+    height: 100%;
+
+    border-radius: 20px;
+
+    background: linear-gradient(
+        90deg,
+        #ff9e25,
+        #ffd94a
+    );
+
+    transition: width 1s ease;
+}
+
+/* ================= FOOTER ================= */
+
+.footer {
+    text-align: center;
+
+    margin: 30px 0;
+
+    color: #60788e;
+
+    font-size: 11px;
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:1000px) {
+
+    .sidebar {
+        width: 70px;
+    }
+
+    .sidebar .logo h1,
+    .sidebar .logo small,
+    .menu-item span:not(.menu-icon),
+    .menu-title,
+    .profile div {
+        display: none;
+    }
+
+    .main {
+        margin-left: 70px;
+    }
+
+    .cards {
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+    .grid-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media(max-width:650px) {
+
+    .main {
+        padding: 12px;
+    }
+
+    .hero h2 {
+        font-size: 21px;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    .times,
+    .weather-grid,
+    .coordinates {
+        grid-template-columns: 1fr;
+    }
+
+    .search-box {
+        flex-direction: column;
+    }
+
+    .search-box input {
+        width: 100%;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- ================= SIDEBAR ================= -->
+
+<aside class="sidebar">
+
+    <div class="logo">
+        <div class="logo-icon">☀️</div>
+
+        <div>
+            <h1>Solar<span>Quest</span></h1>
+            <small>INNOVATE TO CAPTURE MORE</small>
+        </div>
+    </div>
+
+    <div class="menu-title">Main</div>
+
+    <div class="menu-item active">
+        <span class="menu-icon">▦</span>
+        <span>Dashboard</span>
+    </div>
+
+    <div class="menu-item">
+        <span class="menu-icon">☀</span>
+        <span>Solar Analysis</span>
+    </div>
+
+    <div class="menu-item">
+        <span class="menu-icon">⚙</span>
+        <span>Optimizer</span>
+    </div>
+
+    <div class="menu-item">
+        <span class="menu-icon">◉</span>
+        <span>Simulation</span>
+    </div>
+
+    <div class="menu-item">
+        <span class="menu-icon">✦</span>
+        <span>AI Prediction</span>
+    </div>
+
+    <div class="menu-item">
+        <span class="menu-icon">▥</span>
+        <span>Analytics</span>
+    </div>
+
+    <div class="menu-title">More</div>
+
+    <div class="menu-item">
+        <span class="menu-icon">☼</span>
+        <span>Weather & Sunlight</span>
+    </div>
+
+    <div class="menu-item">
+        <span class="menu-icon">◈</span>
+        <span>Sun Simulator</span>
+    </div>
+
+    <div class="profile">
+
+        <div class="profile-circle">
+            👤
+        </div>
+
+        <div>
+            <strong>Solar User</strong>
+            <small style="display:block;color:#71869b;">
+                SolarQuest
+            </small>
+        </div>
+
+    </div>
+
+</aside>
+
+
+<!-- ================= MAIN ================= -->
+
+<main class="main">
+
+    <div class="topbar">
+
+        <div>
+            <strong>Solar Intelligence Dashboard</strong>
+        </div>
+
+        <div class="live">
+            <span class="live-dot"></span>
+            Live Data
+        </div>
+
+    </div>
+
+
+    <!-- ================= HERO ================= -->
+
+    <section class="hero">
+
+        <h2>
+            Good Afternoon, <span>Solar Explorer!</span> ☀️
+        </h2>
+
+        <p class="hero-sub">
+            Discover your local sunlight, sunrise and sunset conditions.
+        </p>
+
+        <div class="location-info">
+
+            <div>
+                📍
+                <strong id="locationName">
+                    Location not selected
+                </strong>
+            </div>
+
+            <div>
+                🕒
+                <strong id="currentTime">
+                    --
+                </strong>
+            </div>
+
+        </div>
+
+        <div class="buttons">
+
+            <button class="primary" onclick="useMyLocation()">
+                📍 Use My Location
+            </button>
+
+            <button class="secondary" onclick="refreshData()">
+                🔄 Refresh
+            </button>
+
+        </div>
+
+        <div class="search-box">
+
+            <input
+                id="placeInput"
+                type="text"
+                placeholder="Search city e.g. Chennai"
+            >
+
+            <button
+                class="secondary"
+                onclick="searchPlace()"
+            >
+                🔎 Search
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= TODAY ================= -->
+
+    <h3 class="section-title">
+        Today's Sunlight Overview
+    </h3>
+
+    <section class="cards">
+
+        <div class="card">
+
+            <div class="card-top">
+
+                <div class="card-icon">
+                    🌅
+                </div>
+
+                Sunrise
+
+            </div>
+
+            <div
+                class="card-value orange"
+                id="sunrise"
+            >
+                --
+            </div>
+
+            <div class="card-description">
+                Sun appears above horizon
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-top">
+
+                <div class="card-icon">
+                    🌇
+                </div>
+
+                Sunset
+
+            </div>
+
+            <div
+                class="card-value orange"
+                id="sunset"
+            >
+                --
+            </div>
+
+            <div class="card-description">
+                Sun goes below horizon
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-top">
+
+                <div class="card-icon">
+                    ☀️
+                </div>
+
+                Daylight
+
+            </div>
+
+            <div
+                class="card-value green"
+                id="daylight"
+            >
+                --
+            </div>
+
+            <div class="card-description">
+                Total sunlight duration
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-top">
+
+                <div class="card-icon">
+                    🕛
+                </div>
+
+                Solar Noon
+
+            </div>
+
+            <div
+                class="card-value"
+                id="solarNoon"
+            >
+                --
+            </div>
+
+            <div class="card-description">
+                Sun reaches highest point
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= MAIN GRID ================= -->
+
+    <div class="grid-2">
+
+
+        <!-- SUN CARD -->
+
+        <section class="sun-card">
+
+            <h3>
+                ☀️ Sun Position Today
+            </h3>
+
+            <div class="sun-visual">
+
+                <div
+                    class="sun"
+                    id="sunVisual"
+                ></div>
+
+                <div class="horizon"></div>
+
+                <div class="sun-info">
+
+                    <div>
+                        Sunrise:
+                        <strong id="sunrise2">
+                            --
+                        </strong>
+                    </div>
+
+                    <div style="margin-top:5px;">
+                        Sunset:
+                        <strong id="sunset2">
+                            --
+                        </strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="progress-container">
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    margin-bottom:7px;
+                    font-size:12px;
+                    color:#8195a9;
+                ">
+
+                    <span>Daylight Progress</span>
+
+                    <strong id="dayProgress">
+                        0%
+                    </strong>
+
+                </div>
+
+                <div class="progress-bar">
+
+                    <div
+                        class="progress"
+                        id="progress"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <div class="times">
+
+                <div class="time-box">
+
+                    <div class="time-label">
+                        🌄 Civil Dawn
+                    </div>
+
+                    <div
+                        class="time-value sunrise"
+                        id="dawn"
+                    >
+                        --
+                    </div>
+
+                </div>
+
+
+                <div class="time-box">
+
+                    <div class="time-label">
+                        🌆 Civil Dusk
+                    </div>
+
+                    <div
+                        class="time-value sunset"
+                        id="dusk"
+                    >
+                        --
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- LOCATION + WEATHER -->
+
+        <section class="location-card">
+
+            <h3>
+                📍 Solar Site
+            </h3>
+
+            <p
+                id="placeDetails"
+                style="
+                    margin-top:8px;
+                    color:#8ea4b8;
+                    font-size:13px;
+                "
+            >
+                Use your location to begin.
+            </p>
+
+
+            <div class="coordinates">
+
+                <div class="coordinate">
+
+                    <small>Latitude</small>
+
+                    <strong id="latitude">
+                        --
+                    </strong>
+
+                </div>
+
+
+                <div class="coordinate">
+
+                    <small>Longitude</small>
+
+                    <strong id="longitude">
+                        --
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="section-title">
+                🌤️ Current Weather
+            </div>
+
+
+            <div class="weather-grid">
+
+                <div class="weather-box">
+
+                    <div class="weather-icon">
+                        🌡️
+                    </div>
+
+                    <div
+                        class="weather-value"
+                        id="temperature"
+                    >
+                        --
+                    </div>
+
+                    <div class="weather-label">
+                        Temperature
+                    </div>
+
+                </div>
+
+
+                <div class="weather-box">
+
+                    <div class="weather-icon">
+                        ☁️
+                    </div>
+
+                    <div
+                        class="weather-value"
+                        id="cloud"
+                    >
+                        --
+                    </div>
+
+                    <div class="weather-label">
+                        Cloud Cover
+                    </div>
+
+                </div>
+
+
+                <div class="weather-box">
+
+                    <div class="weather-icon">
+                        💨
+                    </div>
+
+                    <div
+                        class="weather-value"
+                        id="wind"
+                    >
+                        --
+                    </div>
+
+                    <div class="weather-label">
+                        Wind Speed
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <div class="footer">
+
+        SolarQuest • Sunlight Intelligence Dashboard
+        <br>
+        Data powered by Open-Meteo
+
+    </div>
+
+</main>
+
+
+<script>
+
+/* =====================================================
+   GLOBAL LOCATION DATA
+===================================================== */
+
+let currentLat = null;
+let currentLon = null;
+
+
+/* =====================================================
+   FORMAT TIME
+===================================================== */
+
+function formatTime(dateString) {
+
+    const date = new Date(dateString);
+
+    return date.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit"
+    });
+
+}
+
+
+/* =====================================================
+   FORMAT DAYLIGHT
+===================================================== */
+
+function formatDuration(seconds) {
+
+    const hours = Math.floor(seconds / 3600);
+
+    const minutes =
+        Math.round((seconds % 3600) / 60);
+
+    return `${hours}h ${minutes}m`;
+
+}
+
+
+/* =====================================================
+   GET SUN + WEATHER DATA
+===================================================== */
+
+async function getSolarData(lat, lon, locationName) {
+
+    try {
+
+        document.getElementById("locationName").textContent =
+            locationName;
+
+        document.getElementById("placeDetails").textContent =
+            "Loading solar information...";
+
+
+        /*
+            Open-Meteo gives:
+
+            Sunrise
+            Sunset
+            Daylight
+            Solar noon
+            Dawn
+            Dusk
+            Temperature
+            Cloud cover
+            Wind speed
+            Timezone
+        */
+
+        const url =
+        `https://api.open-meteo.com/v1/forecast?` +
+        `latitude=${lat}` +
+        `&longitude=${lon}` +
+        `&daily=sunrise,sunset,sunshine_duration,` +
+        `daylight_duration,sunrise,sunset` +
+        `&current=temperature_2m,cloud_cover,wind_speed_10m` +
+        `&timezone=auto`;
+
+
+        const response = await fetch(url);
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Unable to get solar information."
+            );
+
+        }
+
+
+        const data = await response.json();
+
+
+        currentLat = lat;
+        currentLon = lon;
+
+
+        /* ================= SUN DATA ================= */
+
+        const sunrise =
+            data.daily.sunrise[0];
+
+        const sunset =
+            data.daily.sunset[0];
+
+
+        const sunriseDate =
+            new Date(sunrise);
+
+        const sunsetDate =
+            new Date(sunset);
+
+
+        const daylightSeconds =
+            Math.floor(
+                (sunsetDate - sunriseDate) / 1000
+            );
+
+
+        /* Solar noon */
+
+        const solarNoonDate =
+            new Date(
+                sunriseDate.getTime() +
+                (sunsetDate.getTime() -
+                 sunriseDate.getTime()) / 2
+            );
+
+
+        /* ================= DISPLAY ================= */
+
+        document.getElementById("sunrise").textContent =
+            formatTime(sunrise);
+
+        document.getElementById("sunset").textContent =
+            formatTime(sunset);
+
+        document.getElementById("sunrise2").textContent =
+            formatTime(sunrise);
+
+        document.getElementById("sunset2").textContent =
+            formatTime(sunset);
+
+        document.getElementById("solarNoon").textContent =
+            formatTime(solarNoonDate);
+
+        document.getElementById("daylight").textContent =
+            formatDuration(daylightSeconds);
+
+
+        /* ================= DAWN / DUSK ================= */
+
+        /*
+            Civil dawn is approximately
+            24 minutes before sunrise.
+
+            Civil dusk is approximately
+            24 minutes after sunset.
+
+            This is a simple visual approximation.
+        */
+
+        const dawnDate =
+            new Date(
+                sunriseDate.getTime() -
+                24 * 60 * 1000
+            );
+
+        const duskDate =
+            new Date(
+                sunsetDate.getTime() +
+                24 * 60 * 1000
+            );
+
+
+        document.getElementById("dawn").textContent =
+            formatTime(dawnDate);
+
+        document.getElementById("dusk").textContent =
+            formatTime(duskDate);
+
+
+        /* ================= LOCATION ================= */
+
+        document.getElementById("latitude").textContent =
+            Number(lat).toFixed(4) + "°";
+
+        document.getElementById("longitude").textContent =
+            Number(lon).toFixed(4) + "°";
+
+
+        document.getElementById("placeDetails").textContent =
+            `${locationName} • Local Solar Data`;
+
+
+        /* ================= WEATHER ================= */
+
+        if (data.current) {
+
+            document.getElementById("temperature").textContent =
+                Math.round(
+                    data.current.temperature_2m
+                ) + "°C";
+
+
+            document.getElementById("cloud").textContent =
+                data.current.cloud_cover + "%";
+
+
+            document.getElementById("wind").textContent =
+                Math.round(
+                    data.current.wind_speed_10m
+                ) + " km/h";
+
+        }
+
+
+        /* ================= SUNLIGHT PROGRESS ================= */
+
+        updateSunProgress(
+            sunriseDate,
+            sunsetDate
+        );
+
+
+        document.getElementById("placeDetails").textContent =
+            `${locationName} • Data updated just now`;
+
+
+    } catch(error) {
+
+        console.error(error);
+
+        document.getElementById("placeDetails").textContent =
+            "Unable to load solar data.";
+
+        alert(
+            "Could not load solar information. Please try again."
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   SUNLIGHT PROGRESS
+===================================================== */
+
+function updateSunProgress(sunrise, sunset) {
+
+    const now = new Date();
+
+    const total =
+        sunset - sunrise;
+
+    const elapsed =
+        now - sunrise;
+
+
+    let percentage =
+        (elapsed / total) * 100;
+
+
+    percentage =
+        Math.max(
+            0,
+            Math.min(
+                100,
+                percentage
+            )
+        );
+
+
+    document.getElementById("progress").style.width =
+        percentage + "%";
+
+
+    document.getElementById("dayProgress").textContent =
+        Math.round(percentage) + "%";
+
+
+    /*
+        Move the sun across the visual
+        according to current time.
+    */
+
+    const sun =
+        document.getElementById("sunVisual");
+
+
+    if (
+        now >= sunrise &&
+        now <= sunset
+    ) {
+
+        const x =
+            percentage;
+
+
+        /*
+            Parabolic-style vertical movement.
+        */
+
+        const height =
+            25 +
+            Math.sin(
+                (percentage / 100) *
+                Math.PI
+            ) * 95;
+
+
+        sun.style.left =
+            x + "%";
+
+        sun.style.top =
+            (140 - height) + "px";
+
+        sun.style.transform =
+            "translateX(-50%)";
+
+    } else {
+
+        /*
+            Before sunrise / after sunset
+        */
+
+        sun.style.left = "50%";
+        sun.style.top = "160px";
+
+    }
+
+}
+
+
+/* =====================================================
+   USE MY LOCATION
+===================================================== */
+
+function useMyLocation() {
+
+    if (!navigator.geolocation) {
+
+        alert(
+            "Geolocation is not supported by your browser."
+        );
+
+        return;
+
+    }
+
+
+    document.getElementById("locationName").textContent =
+        "Finding your location...";
+
+
+    navigator.geolocation.getCurrentPosition(
+
+        async function(position) {
+
+            const lat =
+                position.coords.latitude;
+
+            const lon =
+                position.coords.longitude;
+
+
+            /*
+                Reverse geocoding:
+                Convert coordinates into
+                a readable city name.
+            */
+
+            try {
+
+                const response =
+                    await fetch(
+                        `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&count=1`
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                let locationName =
+                    "Your Location";
+
+
+                if (
+                    data.results &&
+                    data.results.length > 0
+                ) {
+
+                    const place =
+                        data.results[0];
+
+
+                    locationName =
+                        place.name;
+
+
+                    if (place.country) {
+
+                        locationName +=
+                            ", " + place.country;
+
+                    }
+
+                }
+
+
+                await getSolarData(
+                    lat,
+                    lon,
+                    locationName
+                );
+
+
+            } catch(error) {
+
+                await getSolarData(
+                    lat,
+                    lon,
+                    "Your Location"
+                );
+
+            }
+
+        },
+
+        function(error) {
+
+            console.error(error);
+
+            alert(
+                "Location access was denied.\n\n" +
+                "Please allow location permission in your browser and try again."
+            );
+
+        },
+
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 300000
+        }
+
+    );
+
+}
+
+
+/* =====================================================
+   SEARCH CITY
+===================================================== */
+
+async function searchPlace() {
+
+    const query =
+        document
+        .getElementById("placeInput")
+        .value
+        .trim();
+
+
+    if (!query) {
+
+        alert(
+            "Please enter a city name."
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        document.getElementById("locationName").textContent =
+            "Searching...";
+
+
+        const response =
+            await fetch(
+                `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=1&language=en&format=json`
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !data.results ||
+            data.results.length === 0
+        ) {
+
+            throw new Error(
+                "Location not found"
+            );
+
+        }
+
+
+        const place =
+            data.results[0];
+
+
+        let name =
+            place.name;
+
+
+        if (place.country) {
+
+            name +=
+                ", " + place.country;
+
+        }
+
+
+        await getSolarData(
+            place.latitude,
+            place.longitude,
+            name
+        );
+
+
+    } catch(error) {
+
+        alert(
+            "Location not found. Try another city."
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   REFRESH
+===================================================== */
+
+function refreshData() {
+
+    if (
+        currentLat !== null &&
+        currentLon !== null
+    ) {
+
+        getSolarData(
+            currentLat,
+            currentLon,
+            document
+                .getElementById("locationName")
+                .textContent
+        );
+
+    } else {
+
+        useMyLocation();
+
+    }
+
+}
+
+
+/* =====================================================
+   CURRENT CLOCK
+===================================================== */
+
+function updateClock() {
+
+    const now =
+        new Date();
+
+
+    document.getElementById(
+        "currentTime"
+    ).textContent =
+        now.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit"
+        });
+
+}
+
+
+/* =====================================================
+   START CLOCK
+===================================================== */
+
+updateClock();
+
+setInterval(
+    updateClock,
+    1000
+);
+
+
+/* =====================================================
+   ENTER KEY SEARCH
+===================================================== */
+
+document
+.getElementById("placeInput")
+.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (event.key === "Enter") {
+
+            searchPlace();
+
+        }
+
+    }
+);
+
+</script>
+
+</body>
+</html>
