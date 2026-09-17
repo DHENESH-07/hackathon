@@ -1,0 +1,2153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SolarQuest - Historical Solar Potential</title>
+
+<style>
+
+/* =====================================================
+   RESET
+===================================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    color: white;
+    min-height: 100vh;
+
+    background:
+        radial-gradient(
+            circle at 75% 10%,
+            rgba(255, 180, 50, 0.13),
+            transparent 25%
+        ),
+        radial-gradient(
+            circle at 10% 90%,
+            rgba(0, 130, 255, 0.15),
+            transparent 30%
+        ),
+        linear-gradient(
+            135deg,
+            #020b18,
+            #061b32 50%,
+            #03101f
+        );
+}
+
+
+/* =====================================================
+   SIDEBAR
+===================================================== */
+
+.sidebar {
+
+    position: fixed;
+
+    left: 0;
+    top: 0;
+
+    width: 225px;
+    height: 100vh;
+
+    padding: 22px 15px;
+
+    background:
+        rgba(2, 12, 27, 0.95);
+
+    border-right:
+        1px solid rgba(255,255,255,0.08);
+
+}
+
+
+/* LOGO */
+
+.logo {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 30px;
+
+}
+
+.logo-icon {
+
+    font-size: 34px;
+
+}
+
+.logo h1 {
+
+    font-size: 20px;
+
+}
+
+.logo h1 span {
+
+    color: #ffbd3d;
+
+}
+
+.logo small {
+
+    display: block;
+
+    font-size: 8px;
+
+    color: #8ea0b4;
+
+    margin-top: 3px;
+
+}
+
+
+/* MENU */
+
+.menu-title {
+
+    color: #65778b;
+
+    font-size: 11px;
+
+    margin:
+        18px 10px 8px;
+
+    text-transform: uppercase;
+
+}
+
+
+.menu-item {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 12px;
+
+    margin-bottom: 4px;
+
+    border-radius: 9px;
+
+    color: #b7c4d2;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+
+}
+
+
+.menu-item:hover {
+
+    background:
+        rgba(0,120,255,0.18);
+
+    color: white;
+
+}
+
+
+.menu-item.active {
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0,128,255,0.35),
+            rgba(0,128,255,0.10)
+        );
+
+    color: white;
+
+}
+
+
+.menu-icon {
+
+    width: 20px;
+
+    text-align: center;
+
+}
+
+
+/* PROFILE */
+
+.profile {
+
+    position: absolute;
+
+    bottom: 20px;
+
+    left: 15px;
+
+    right: 15px;
+
+    padding-top: 15px;
+
+    border-top:
+        1px solid rgba(255,255,255,0.08);
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+}
+
+.profile-circle {
+
+    width: 35px;
+
+    height: 35px;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #8b9caf,
+            #26394e
+        );
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+
+/* =====================================================
+   MAIN
+===================================================== */
+
+.main {
+
+    margin-left: 225px;
+
+    padding: 25px;
+
+    max-width: 1500px;
+
+}
+
+
+/* =====================================================
+   TOP BAR
+===================================================== */
+
+.topbar {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 20px;
+
+}
+
+
+.live {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 7px 12px;
+
+    border-radius: 20px;
+
+    background:
+        rgba(0,255,180,0.08);
+
+    border:
+        1px solid rgba(0,255,180,0.15);
+
+    font-size: 12px;
+
+}
+
+
+.live-dot {
+
+    width: 7px;
+
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #00e6a8;
+
+    box-shadow:
+        0 0 10px #00e6a8;
+
+}
+
+
+/* =====================================================
+   HERO
+===================================================== */
+
+.hero {
+
+    position: relative;
+
+    overflow: hidden;
+
+    min-height: 220px;
+
+    padding: 30px;
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            100deg,
+            rgba(3,17,35,0.98),
+            rgba(5,43,68,0.82),
+            rgba(5,40,65,0.35)
+        );
+
+    border:
+        1px solid rgba(255,255,255,0.10);
+
+}
+
+
+.hero::after {
+
+    content: "☀️";
+
+    position: absolute;
+
+    right: 9%;
+
+    top: 25px;
+
+    font-size: 115px;
+
+    opacity: 0.14;
+
+}
+
+
+.hero h2 {
+
+    font-size: 28px;
+
+    margin-bottom: 8px;
+
+}
+
+
+.hero h2 span {
+
+    color: #ffbe3d;
+
+}
+
+
+.hero p {
+
+    color: #9eb1c5;
+
+    margin-bottom: 20px;
+
+}
+
+
+.location {
+
+    color: #aebfd0;
+
+    font-size: 13px;
+
+}
+
+
+.location strong {
+
+    color: white;
+
+}
+
+
+/* =====================================================
+   BUTTONS
+===================================================== */
+
+.buttons {
+
+    display: flex;
+
+    gap: 10px;
+
+    margin-top: 20px;
+
+}
+
+
+button {
+
+    border: none;
+
+    cursor: pointer;
+
+    padding:
+        11px 18px;
+
+    border-radius: 9px;
+
+    font-weight: bold;
+
+    transition: 0.2s;
+
+}
+
+
+.primary {
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffbe3b,
+            #ff9d22
+        );
+
+    color: #111;
+
+}
+
+
+.secondary {
+
+    color: white;
+
+    background:
+        rgba(0,120,255,0.15);
+
+    border:
+        1px solid #2488d9;
+
+}
+
+
+button:hover {
+
+    transform:
+        translateY(-2px);
+
+}
+
+
+/* =====================================================
+   SEARCH
+===================================================== */
+
+.search {
+
+    display: flex;
+
+    gap: 8px;
+
+    margin-top: 15px;
+
+}
+
+
+.search input {
+
+    width: 260px;
+
+    padding:
+        10px 14px;
+
+    border-radius: 8px;
+
+    border:
+        1px solid rgba(255,255,255,0.15);
+
+    background:
+        rgba(0,0,0,0.25);
+
+    color: white;
+
+    outline: none;
+
+}
+
+
+.search input::placeholder {
+
+    color: #788ba0;
+
+}
+
+
+/* =====================================================
+   DATE CONTROLS
+===================================================== */
+
+.controls {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    flex-wrap: wrap;
+
+    margin-top: 20px;
+
+}
+
+
+.controls label {
+
+    color: #9eb1c5;
+
+    font-size: 13px;
+
+}
+
+
+.controls select {
+
+    padding: 10px 14px;
+
+    border-radius: 8px;
+
+    border:
+        1px solid rgba(255,255,255,0.15);
+
+    background:
+        #08233b;
+
+    color: white;
+
+}
+
+
+/* =====================================================
+   SECTION TITLE
+===================================================== */
+
+.section-title {
+
+    font-size: 18px;
+
+    margin:
+        20px 0 12px;
+
+}
+
+
+/* =====================================================
+   SUMMARY CARDS
+===================================================== */
+
+.cards {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap: 12px;
+
+}
+
+
+.card {
+
+    padding: 20px;
+
+    min-height: 130px;
+
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(15,58,88,0.75),
+            rgba(4,27,49,0.90)
+        );
+
+    border:
+        1px solid rgba(100,180,230,0.15);
+
+}
+
+
+.card-top {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    color: #9db1c4;
+
+    font-size: 13px;
+
+}
+
+
+.card-icon {
+
+    width: 42px;
+
+    height: 42px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+        rgba(255,190,50,0.10);
+
+    font-size: 22px;
+
+}
+
+
+.card-value {
+
+    font-size: 25px;
+
+    font-weight: bold;
+
+    margin-top: 13px;
+
+    color: #ffc348;
+
+}
+
+
+.card-description {
+
+    color: #71869a;
+
+    font-size: 10px;
+
+    margin-top: 5px;
+
+}
+
+
+/* =====================================================
+   CHART CARD
+===================================================== */
+
+.chart-card {
+
+    margin-top: 15px;
+
+    padding: 20px;
+
+    border-radius: 16px;
+
+    background:
+        rgba(4,27,49,0.78);
+
+    border:
+        1px solid rgba(100,180,230,0.15);
+
+}
+
+
+.chart-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 15px;
+
+}
+
+
+.chart-header span {
+
+    color: #7f95aa;
+
+    font-size: 12px;
+
+}
+
+
+/* CHART */
+
+.chart-wrapper {
+
+    width: 100%;
+
+    height: 330px;
+
+    position: relative;
+
+    overflow: hidden;
+
+}
+
+
+canvas {
+
+    width: 100% !important;
+
+    height: 100% !important;
+
+}
+
+
+/* =====================================================
+   LOCATION
+===================================================== */
+
+.location-card {
+
+    margin-top: 15px;
+
+    padding: 20px;
+
+    border-radius: 15px;
+
+    background:
+        rgba(4,27,49,0.75);
+
+    border:
+        1px solid rgba(100,180,230,0.15);
+
+}
+
+
+.location-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap: 10px;
+
+    margin-top: 15px;
+
+}
+
+
+.location-box {
+
+    padding: 15px;
+
+    border-radius: 9px;
+
+    background:
+        rgba(0,0,0,0.18);
+
+}
+
+
+.location-box small {
+
+    color: #71879c;
+
+}
+
+
+.location-box strong {
+
+    display: block;
+
+    margin-top: 5px;
+
+}
+
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+.footer {
+
+    text-align: center;
+
+    margin-top: 30px;
+
+    color: #60788e;
+
+    font-size: 11px;
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:1000px) {
+
+    .sidebar {
+
+        width: 70px;
+
+    }
+
+    .sidebar .logo h1,
+    .sidebar .logo small,
+    .menu-item span:not(.menu-icon),
+    .menu-title,
+    .profile div {
+
+        display: none;
+
+    }
+
+    .main {
+
+        margin-left: 70px;
+
+    }
+
+}
+
+
+@media(max-width:650px) {
+
+    .main {
+
+        padding: 12px;
+
+    }
+
+    .hero h2 {
+
+        font-size: 21px;
+
+    }
+
+    .cards {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .location-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .search {
+
+        flex-direction: column;
+
+    }
+
+    .search input {
+
+        width: 100%;
+
+    }
+
+    .chart-wrapper {
+
+        height: 250px;
+
+    }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     SIDEBAR
+===================================================== -->
+
+<aside class="sidebar">
+
+    <div class="logo">
+
+        <div class="logo-icon">
+            ☀️
+        </div>
+
+        <div>
+
+            <h1>
+                Solar<span>Quest</span>
+            </h1>
+
+            <small>
+                INNOVATE TO CAPTURE MORE
+            </small>
+
+        </div>
+
+    </div>
+
+
+    <div class="menu-title">
+        Main
+    </div>
+
+
+    <div class="menu-item">
+        <span class="menu-icon">▦</span>
+        <span>Dashboard</span>
+    </div>
+
+
+    <div class="menu-item">
+        <span class="menu-icon">🌅</span>
+        <span>Sunrise & Sunset</span>
+    </div>
+
+
+    <div class="menu-item">
+        <span class="menu-icon">🌡️</span>
+        <span>Temperature</span>
+    </div>
+
+
+    <div class="menu-item active">
+        <span class="menu-icon">☀️</span>
+        <span>Historical Solar</span>
+    </div>
+
+
+    <div class="menu-item">
+        <span class="menu-icon">☁️</span>
+        <span>Weather</span>
+    </div>
+
+
+    <div class="menu-item">
+        <span class="menu-icon">📊</span>
+        <span>Analytics</span>
+    </div>
+
+
+    <div class="menu-title">
+        More
+    </div>
+
+
+    <div class="menu-item">
+        <span class="menu-icon">⚙</span>
+        <span>Settings</span>
+    </div>
+
+
+    <div class="profile">
+
+        <div class="profile-circle">
+            👤
+        </div>
+
+        <div>
+
+            <strong>
+                Solar User
+            </strong>
+
+            <small
+                style="display:block;color:#71869b;"
+            >
+                SolarQuest
+            </small>
+
+        </div>
+
+    </div>
+
+</aside>
+
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main class="main">
+
+
+    <!-- TOP BAR -->
+
+    <div class="topbar">
+
+        <strong>
+            Historical Solar Intelligence
+        </strong>
+
+
+        <div class="live">
+
+            <span class="live-dot"></span>
+
+            Historical Data
+
+        </div>
+
+    </div>
+
+
+
+    <!-- HERO -->
+
+    <section class="hero">
+
+        <h2>
+
+            Historical
+            <span>Solar Potential</span> ☀️
+
+        </h2>
+
+
+        <p>
+
+            Explore how solar radiation has changed
+            at your location over time.
+
+        </p>
+
+
+        <div class="location">
+
+            📍
+
+            <strong id="locationName">
+                Location not selected
+            </strong>
+
+        </div>
+
+
+        <div class="buttons">
+
+            <button
+                class="primary"
+                onclick="useMyLocation()"
+            >
+
+                📍 Use My Location
+
+            </button>
+
+
+            <button
+                class="secondary"
+                onclick="loadHistoricalData()"
+            >
+
+                🔄 Refresh
+
+            </button>
+
+        </div>
+
+
+        <div class="search">
+
+            <input
+                type="text"
+                id="placeInput"
+                placeholder="Search city e.g. Chennai"
+            >
+
+
+            <button
+                class="secondary"
+                onclick="searchPlace()"
+            >
+
+                🔎 Search
+
+            </button>
+
+        </div>
+
+
+        <!-- DATE RANGE -->
+
+        <div class="controls">
+
+            <label>
+                Historical period:
+            </label>
+
+
+            <select
+                id="period"
+                onchange="loadHistoricalData()"
+            >
+
+                <option value="7">
+                    Last 7 Days
+                </option>
+
+                <option value="14">
+                    Last 14 Days
+                </option>
+
+                <option value="30" selected>
+                    Last 30 Days
+                </option>
+
+                <option value="60">
+                    Last 60 Days
+                </option>
+
+                <option value="90">
+                    Last 90 Days
+                </option>
+
+            </select>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- SUMMARY -->
+
+    <h3 class="section-title">
+
+        Solar Potential Overview
+
+    </h3>
+
+
+    <section class="cards">
+
+
+        <!-- AVERAGE -->
+
+        <div class="card">
+
+            <div class="card-top">
+
+                <div class="card-icon">
+                    ☀️
+                </div>
+
+                Average Solar Radiation
+
+            </div>
+
+
+            <div
+                class="card-value"
+                id="average"
+            >
+                -- MJ/m²
+            </div>
+
+
+            <div class="card-description">
+
+                Average daily solar radiation
+
+            </div>
+
+        </div>
+
+
+
+        <!-- HIGHEST -->
+
+        <div class="card">
+
+            <div class="card-top">
+
+                <div class="card-icon">
+                    🔆
+                </div>
+
+                Highest Potential
+
+            </div>
+
+
+            <div
+                class="card-value"
+                id="highest"
+            >
+                -- MJ/m²
+            </div>
+
+
+            <div class="card-description">
+
+                Highest recorded day in period
+
+            </div>
+
+        </div>
+
+
+
+        <!-- LOWEST -->
+
+        <div class="card">
+
+            <div class="card-top">
+
+                <div class="card-icon">
+                    🌥️
+                </div>
+
+                Lowest Potential
+
+            </div>
+
+
+            <div
+                class="card-value"
+                id="lowest"
+            >
+                -- MJ/m²
+            </div>
+
+
+            <div class="card-description">
+
+                Lowest recorded day in period
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         GRAPH
+    ================================================= -->
+
+    <section class="chart-card">
+
+        <div class="chart-header">
+
+            <h3>
+                ☀️ Historical Solar Radiation
+            </h3>
+
+
+            <span>
+                Daily shortwave radiation
+            </span>
+
+        </div>
+
+
+        <div class="chart-wrapper">
+
+            <canvas id="solarChart"></canvas>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- LOCATION -->
+
+    <section class="location-card">
+
+        <h3>
+            📍 Solar Site
+        </h3>
+
+
+        <div class="location-grid">
+
+
+            <div class="location-box">
+
+                <small>
+                    Latitude
+                </small>
+
+                <strong id="latitude">
+                    --
+                </strong>
+
+            </div>
+
+
+            <div class="location-box">
+
+                <small>
+                    Longitude
+                </small>
+
+                <strong id="longitude">
+                    --
+                </strong>
+
+            </div>
+
+
+            <div class="location-box">
+
+                <small>
+                    Time Zone
+                </small>
+
+                <strong id="timezone">
+                    --
+                </strong>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <div class="footer">
+
+        SolarQuest • Historical Solar Intelligence
+
+        <br>
+
+        Historical radiation data powered by Open-Meteo
+
+    </div>
+
+
+</main>
+
+
+
+<!-- =====================================================
+     CHART.JS
+===================================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<script>
+
+/* =====================================================
+   GLOBAL VARIABLES
+===================================================== */
+
+let currentLat = null;
+let currentLon = null;
+
+let solarChart = null;
+
+
+/* =====================================================
+   DATE FORMAT
+===================================================== */
+
+function formatDate(date) {
+
+    return date.toISOString()
+        .split("T")[0];
+
+}
+
+
+/* =====================================================
+   USE MY LOCATION
+===================================================== */
+
+function useMyLocation() {
+
+    if (!navigator.geolocation) {
+
+        alert(
+            "Geolocation is not supported by your browser."
+        );
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        "locationName"
+    ).textContent =
+        "Finding your location...";
+
+
+    navigator.geolocation.getCurrentPosition(
+
+        async function(position) {
+
+            const lat =
+                position.coords.latitude;
+
+            const lon =
+                position.coords.longitude;
+
+
+            try {
+
+                /*
+                    Reverse geocoding
+                */
+
+                const response =
+                    await fetch(
+                        `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&count=1&language=en&format=json`
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                let locationName =
+                    "Your Location";
+
+
+                if (
+                    data.results &&
+                    data.results.length > 0
+                ) {
+
+                    const place =
+                        data.results[0];
+
+
+                    locationName =
+                        place.name;
+
+
+                    if (place.country) {
+
+                        locationName +=
+                            ", " +
+                            place.country;
+
+                    }
+
+                }
+
+
+                currentLat = lat;
+                currentLon = lon;
+
+
+                document.getElementById(
+                    "locationName"
+                ).textContent =
+                    locationName;
+
+
+                document.getElementById(
+                    "latitude"
+                ).textContent =
+                    lat.toFixed(4) + "°";
+
+
+                document.getElementById(
+                    "longitude"
+                ).textContent =
+                    lon.toFixed(4) + "°";
+
+
+                loadHistoricalData();
+
+
+            }
+
+            catch(error) {
+
+                currentLat = lat;
+                currentLon = lon;
+
+                document.getElementById(
+                    "locationName"
+                ).textContent =
+                    "Your Location";
+
+
+                loadHistoricalData();
+
+            }
+
+        },
+
+
+        function(error) {
+
+            alert(
+                "Location access was denied.\n\n" +
+                "Please allow location permission and try again."
+            );
+
+        },
+
+        {
+
+            enableHighAccuracy: true,
+
+            timeout: 10000,
+
+            maximumAge: 300000
+
+        }
+
+    );
+
+}
+
+
+/* =====================================================
+   SEARCH CITY
+===================================================== */
+
+async function searchPlace() {
+
+    const query =
+        document
+        .getElementById("placeInput")
+        .value
+        .trim();
+
+
+    if (!query) {
+
+        alert(
+            "Enter a city name first."
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        document.getElementById(
+            "locationName"
+        ).textContent =
+            "Searching...";
+
+
+        const response =
+            await fetch(
+                `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=1&language=en&format=json`
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !data.results ||
+            data.results.length === 0
+        ) {
+
+            throw new Error(
+                "Location not found"
+            );
+
+        }
+
+
+        const place =
+            data.results[0];
+
+
+        currentLat =
+            place.latitude;
+
+        currentLon =
+            place.longitude;
+
+
+        let locationName =
+            place.name;
+
+
+        if (place.country) {
+
+            locationName +=
+                ", " +
+                place.country;
+
+        }
+
+
+        document.getElementById(
+            "locationName"
+        ).textContent =
+            locationName;
+
+
+        document.getElementById(
+            "latitude"
+        ).textContent =
+            currentLat.toFixed(4) + "°";
+
+
+        document.getElementById(
+            "longitude"
+        ).textContent =
+            currentLon.toFixed(4) + "°";
+
+
+        loadHistoricalData();
+
+
+    }
+
+    catch(error) {
+
+        alert(
+            "Location not found. Try another city."
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   LOAD HISTORICAL SOLAR DATA
+===================================================== */
+
+async function loadHistoricalData() {
+
+    if (
+        currentLat === null ||
+        currentLon === null
+    ) {
+
+        /*
+            Default location:
+            Chennai
+
+            The user can immediately
+            replace it using
+            "Use My Location".
+        */
+
+        currentLat = 13.0827;
+
+        currentLon = 80.2707;
+
+
+        document.getElementById(
+            "locationName"
+        ).textContent =
+            "Chennai, India";
+
+
+        document.getElementById(
+            "latitude"
+        ).textContent =
+            currentLat.toFixed(4) + "°";
+
+
+        document.getElementById(
+            "longitude"
+        ).textContent =
+            currentLon.toFixed(4) + "°";
+
+    }
+
+
+    try {
+
+        const period =
+            Number(
+                document
+                .getElementById("period")
+                .value
+            );
+
+
+        /*
+            End date = yesterday.
+
+            Historical datasets can have
+            a small delay, so yesterday
+            is safer than requesting today.
+        */
+
+        const end =
+            new Date();
+
+
+        end.setDate(
+            end.getDate() - 1
+        );
+
+
+        const start =
+            new Date(end);
+
+
+        start.setDate(
+            start.getDate() -
+            (period - 1)
+        );
+
+
+        const startDate =
+            formatDate(start);
+
+        const endDate =
+            formatDate(end);
+
+
+        /*
+            Open-Meteo Historical Weather API
+
+            shortwave_radiation_sum =
+            daily solar radiation
+
+            Unit:
+            MJ/m²
+        */
+
+        const url =
+            `https://archive-api.open-meteo.com/v1/archive?` +
+            `latitude=${currentLat}` +
+            `&longitude=${currentLon}` +
+            `&start_date=${startDate}` +
+            `&end_date=${endDate}` +
+            `&daily=shortwave_radiation_sum` +
+            `&timezone=auto`;
+
+
+        const response =
+            await fetch(url);
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Historical data unavailable"
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        const dates =
+            data.daily.time;
+
+
+        const radiation =
+            data.daily.shortwave_radiation_sum;
+
+
+        /*
+            Remove null values.
+        */
+
+        const validValues =
+            radiation.filter(
+                value =>
+                    value !== null
+            );
+
+
+        if (
+            validValues.length === 0
+        ) {
+
+            throw new Error(
+                "No historical solar data found."
+            );
+
+        }
+
+
+        /* =================================================
+           AVERAGE
+        ================================================= */
+
+        const total =
+            validValues.reduce(
+                (sum, value) =>
+                    sum + value,
+                0
+            );
+
+
+        const average =
+            total /
+            validValues.length;
+
+
+        document.getElementById(
+            "average"
+        ).textContent =
+            average.toFixed(1)
+            + " MJ/m²";
+
+
+        /* =================================================
+           HIGHEST
+        ================================================= */
+
+        const highest =
+            Math.max(
+                ...validValues
+            );
+
+
+        document.getElementById(
+            "highest"
+        ).textContent =
+            highest.toFixed(1)
+            + " MJ/m²";
+
+
+        /* =================================================
+           LOWEST
+        ================================================= */
+
+        const lowest =
+            Math.min(
+                ...validValues
+            );
+
+
+        document.getElementById(
+            "lowest"
+        ).textContent =
+            lowest.toFixed(1)
+            + " MJ/m²";
+
+
+        /* =================================================
+           TIMEZONE
+        ================================================= */
+
+        document.getElementById(
+            "timezone"
+        ).textContent =
+            data.timezone;
+
+
+        /* =================================================
+           CREATE GRAPH
+        ================================================= */
+
+        createChart(
+            dates,
+            radiation
+        );
+
+    }
+
+    catch(error) {
+
+        console.error(error);
+
+        alert(
+            "Unable to load historical solar data."
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   CREATE CHART
+===================================================== */
+
+function createChart(
+    dates,
+    radiation
+) {
+
+
+    const canvas =
+        document.getElementById(
+            "solarChart"
+        );
+
+
+    /*
+        Destroy old chart
+        before creating a new one.
+    */
+
+    if (solarChart) {
+
+        solarChart.destroy();
+
+    }
+
+
+    solarChart =
+        new Chart(
+            canvas,
+            {
+
+                type: "line",
+
+
+                data: {
+
+                    labels:
+                        dates.map(
+                            date => {
+
+                                const d =
+                                    new Date(
+                                        date +
+                                        "T00:00:00"
+                                    );
+
+                                return d.toLocaleDateString(
+                                    [],
+                                    {
+                                        day: "2-digit",
+                                        month: "short"
+                                    }
+                                );
+
+                            }
+                        ),
+
+
+                    datasets: [
+
+                        {
+
+                            label:
+                                "Solar Radiation (MJ/m²)",
+
+
+                            data:
+                                radiation,
+
+
+                            borderColor:
+                                "#ffc43d",
+
+
+                            backgroundColor:
+                                "rgba(255,196,61,0.15)",
+
+
+                            borderWidth:
+                                3,
+
+
+                            pointRadius:
+                                3,
+
+
+                            pointBackgroundColor:
+                                "#ffd75a",
+
+
+                            fill:
+                                true,
+
+
+                            tension:
+                                0.35
+
+                        }
+
+                    ]
+
+                },
+
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+
+                    interaction: {
+
+                        intersect: false,
+
+                        mode: "index"
+
+                    },
+
+
+                    plugins: {
+
+                        legend: {
+
+                            labels: {
+
+                                color:
+                                    "#a9bacb"
+
+                            }
+
+                        },
+
+
+                        tooltip: {
+
+                            backgroundColor:
+                                "#071b30",
+
+                            borderColor:
+                                "#24658e",
+
+                            borderWidth:
+                                1,
+
+                            titleColor:
+                                "#ffffff",
+
+                            bodyColor:
+                                "#d8e3ed"
+
+                        }
+
+                    },
+
+
+                    scales: {
+
+                        x: {
+
+                            ticks: {
+
+                                color:
+                                    "#71879c",
+
+                                maxTicksLimit:
+                                    10
+
+                            },
+
+                            grid: {
+
+                                color:
+                                    "rgba(255,255,255,0.05)"
+
+                            }
+
+                        },
+
+
+                        y: {
+
+                            beginAtZero: true,
+
+                            title: {
+
+                                display: true,
+
+                                text:
+                                    "MJ/m²",
+
+                                color:
+                                    "#91a6ba"
+
+                            },
+
+                            ticks: {
+
+                                color:
+                                    "#71879c"
+
+                            },
+
+                            grid: {
+
+                                color:
+                                    "rgba(255,255,255,0.05)"
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        );
+
+}
+
+
+/* =====================================================
+   ENTER KEY SEARCH
+===================================================== */
+
+document
+.getElementById("placeInput")
+.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (event.key === "Enter") {
+
+            searchPlace();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   LOAD DEFAULT DATA
+===================================================== */
+
+loadHistoricalData();
+
+</script>
+
+</body>
+</html>
